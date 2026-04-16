@@ -57,23 +57,36 @@ ABSTRACT ABSTRACT ABSTRACT ABSTRACT ABSTRACT ABSTRACT
 \newpage
 
 \section{Introduction}
-Motywacja, co wiadomo itd. (PL + ANG)
+Problem of finding a longest increasing subsequence is a classic problem in Computer Science.
+Having wide variety of practical applications including (...) it is a heavy researched topic with many 
+variations and different algorithms developed such as ... .
+
+In this paper we focus on solving (both obtaining length and computing the sequence as a whole) LIS problem using small space.
+Based on Kiyomi ... we show proof that presented there Patience Sorting computes length of LIS in $O(max(nlogn, n^2/s))$, and 
+we provide alternative approach to using their algorithm in D&C to obtain said sequence in $O(max(n*logn*loglogs, n^2/s))$ time.
+
+
+
 \subsection{Preliminaries}
 Basic definicje, jaki model uzywamy
 \subsubsection{LIS problem}
-\subsubsection{Classic algorithm}
-\subsubsection{Patience sorting}
+\subsubsection{Classic algorithm} to nie wiem czy trzeba 
+\subsubsection{Patience sorting} to wsumie chyba nie tu
 \subsection{Previous results}
 Co oni zrobili, jak uzyli patience sortingu
 \subsubsection{Time complexity for length computation}
 \subsubsection{Time complexity for LIS computation}
 \subsection{New results}
 \subsubsection{Length computation}
-krotko co nam sie udalo pokazac i ze korzystamy z tego co oni
+In this paper we provide a tighter analysis of Patience Sorting algorithm, the same as one presented by Kiyomi's and ... in [].
+We show that this algorithm actually runs in $O(max(n*logn, n^2/s))$ which is tighter than previous $O(n^2logn/s)$ presented in [].
 \subsubsection{LIS computation}
-zlozonosc jaka pokazemy i krotkie intro
+For retrieving LIS sequence we provide an alternative Divide & Conquer algorithm, which combined with previous observation runs in 
+$O(max(n*logn*loglogs, n^2/s))$ time, improvement on earlier result of $O(n^2/s*log^2(s))$.
 
 \section{Length Computation Complexity Analysis}
+\subsection{Patience sorting}
+\subsection{Time complexity analysis of patience sorting with parametrised size}
 
 \section{LIS Computation Algorithm and Analysis}
 
