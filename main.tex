@@ -57,42 +57,33 @@ ABSTRACT ABSTRACT ABSTRACT ABSTRACT ABSTRACT ABSTRACT
 \newpage
 
 \section{Introduction}
-Problem of finding a longest increasing subsequence is a classic problem in Computer Science.
-Having wide variety of practical applications including (...) it is a heavy researched topic with many 
-variations and different algorithms developed such as ... .
-
-In this paper we focus on solving (both obtaining length and computing the sequence as a whole) LIS problem using small space.
-Based on Kiyomi ... we show proof that presented there Patience Sorting computes length of LIS in $O(max(nlogn, n^2/s))$, and 
-we provide alternative approach to using their algorithm in D&C to obtain said sequence in $O(max(n*logn*loglogs, n^2/s))$ time.
-
+The longest increasing subsequence (LIS for short) problem is a classic algorithmic problem with applications in areas such as sequence analysis, pattern discovery, and optimization. Given a sequence of numbers, the task is to find a longest subsequence whose elements appear in strictly increasing order while preserving their original order, or to compute length of such sequence.
+Although the LIS problem has been studied extensively in many variants, the trade-off between time and space remains relevant when the input is large or memory is limited. In this paper, we focus on computing both the length of an LIS and an actual LIS using small auxiliary space. First contribution regards a tighter analysis of the Patience Sorting based approach introduced by Kiyomi et al., showing that the length can be computed in $O\!\left(\max(n \log n, n^2/s)\right)$ time. We also provide an alternative divide-and-conquer method for recovering the sequence, which combined with the improved length analysis shows an algorithm working in $O\!\left(\max(n \log n \log \log s, n^2/s)\right)$ time.
 
 
 \subsection{Preliminaries}
-Basic definicje, jaki model uzywamy
 \subsubsection{LIS problem}
-\subsubsection{Classic algorithm} to nie wiem czy trzeba 
-\subsubsection{Patience sorting} to wsumie chyba nie tu
+Basic notation and the computational model used throughout the paper.
+\subsubsection{Patience Sorting}
+Overview of classic algorithm (with all piles)
+\subsubsection{Space parametrised Patience Sorting}
+Overview of algorithm from Kiyomi
+
 \subsection{Previous results}
-Co oni zrobili, jak uzyli patience sortingu
 \subsubsection{Time complexity for length computation}
+Time complexity for patience sorting from Kiyomi
 \subsubsection{Time complexity for LIS computation}
+Overview of their approach to D&C in patience sorting and their complexity
 \subsection{New results}
 \subsubsection{Length computation}
-In this paper we provide a tighter analysis of Patience Sorting algorithm, the same as one presented by Kiyomi's and ... in [].
-We show that this algorithm actually runs in $O(max(n*logn, n^2/s))$ which is tighter than previous $O(n^2logn/s)$ presented in [].
+We provide a tighter analysis of the patience sorting algorithm, building on the work of Kiyomi et al. and related results. In particular, we show that the algorithm runs in $O\!\left(\max(n \log n, n^2/s)\right)$ time, improving on the previously stated $O(n^2 \log n / s)$ bound.
 \subsubsection{LIS computation}
-For retrieving LIS sequence we provide an alternative Divide & Conquer algorithm, which combined with previous observation runs in 
-$O(max(n*logn*loglogs, n^2/s))$ time, improvement on earlier result of $O(n^2/s*log^2(s))$.
-
-\section{Length Computation Complexity Analysis}
-\subsection{Patience sorting}
-\subsection{Time complexity analysis of patience sorting with parametrised size}
-
-\section{LIS Computation Algorithm and Analysis}
+To recover an LIS, we present an alternative divide-and-conquer algorithm which, combined with the improved length bound, runs in $O\!\left(\max(n \log n \log \log s, n^2/s)\right)$ time. This improves on the earlier $O(n^2 \log^2(s) / s)$ result.
 
 \section{Summary}
+\subsection{Conclusion}
 \subsection{Open questions}
-jakies summary
+
 \printbibliography
 
 \end{document}
