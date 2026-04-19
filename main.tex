@@ -77,6 +77,25 @@ Overview of their approach to D&C in patience sorting and their complexity
 \subsection{New results}
 \subsubsection{Length computation}
 We provide a tighter analysis of the patience sorting algorithm, building on the work of Kiyomi et al. and related results. In particular, we show that the algorithm runs in $O\!\left(\max(n \log n, n^2/s)\right)$ time, improving on the previously stated $O(n^2 \log n / s)$ bound.
+
+Definition:
+let K = number of passes through input array in Patience Sorting
+let j_i for i = 1, 2, 3...K indexes of piles that Patience Sorting holds in memory after i-th pass, and j_0=0
+let W_i for i = 1, 2, 3...K number of expensive filters made by Patience Sorting durign i-th pass
+
+(*) After defining W_i total complexity is n * K + sum(W_i)*log(s)
+Claim: Its O(max(nlogn), n^2/s)
+1. By Kiyomi K <= n/s
+2. We claim that sum(W_i) = O(n)
+
+Lets fix i:
+During i-th pass of patience sorting we see by definition that expensive filter is being invoked on element <=> this element belongs to a pile with index > j_{i-1} and <= j_{i-1}+2s.
+Second phase of i-th pass we have j_i calculated and then we envoke expensive filter <=> element belongs to a pile with index > j_{i-1} and <= j_{i}.
+From this we conclude that W_i <= sum(k=j_{i-1} to j_{i-1}+2s) |P_k| + sum(k=j_{i-1} to j_{i}) |P_k| <= 2* sum(k=j_{i-1} to j_{i-1}+2s) |P_k|
+So sum(W_i) <= sum(i=1 to K){2*sum(k=j_{i-1} to j_{i-1}+2s)|P_k|}.
+Using the fact that j_i >= j_{i-1} + s we see that certain index "k" can appear in this sum at least 2 times => sum(W_i) <= 2 * n
+
+
 \subsubsection{LIS computation}
 To recover an LIS, we present an alternative divide-and-conquer algorithm which, combined with the improved length bound, runs in $O\!\left(\max(n \log n \log \log s, n^2/s)\right)$ time. This improves on the earlier $O(n^2 \log^2(s) / s)$ result.
 
