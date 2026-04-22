@@ -91,11 +91,29 @@ Although the LIS problem has been studied extensively in many variants, the trad
 
 \subsection{Preliminaries}
 \subsubsection{LIS problem}
-Basic notation and the computational model used throughout the paper.
+We consider the standard longest increasing subsequence problem on an input sequence $A=(a_1,\ldots,a_n)$ of comparable elements.
+
+\begin{definition}
+We define basic notions as follows:
+\begin{itemize}
+    \item An \emph{increasing subsequence} is a sequence of indices $1 \le i_1 < \cdots < i_\ell \le n$ such that
+    \[
+    a_{i_1} < a_{i_2} < \cdots < a_{i_\ell}.
+    \]
+    \item A \emph{longest increasing subsequence} of $A$ is denoted by $L(A)$; if multiple optimal subsequences exist, $L(A)$ can represent any one of them.
+    \item The length of $L(A)$:
+    \[
+    |L(A)|=\max\left\{\ell : \exists\, i_1 < \cdots < i_\ell | a_{i_1} < \cdots < a_{i_\ell}\right\}.
+    \]
+\end{itemize}
+There are two usual problems; we can either ask for computing $L(A)$, or just its length $|L(a)|$
+\end{definition}
+
+We use the RAM model, where the input sequence is read-only and the algorithm has $O(s)$ auxiliary words.
 \subsubsection{Patience Sorting}
-Overview of classic algorithm (with all piles)
+Overview of the classic algorithm (with all piles)
 \subsubsection{Space parametrised Patience Sorting}
-Overview of algorithm from Kiyomi et al.~\cite{kiyomi2017space}
+Overview of the algorithm Kiyomi et al.~\cite{kiyomi2017space}
 
 \subsection{Previous results}
 \subsubsection{Time complexity for length computation}
@@ -103,8 +121,8 @@ Time complexity for patience sorting from Kiyomi et al.~\cite{kiyomi2017space}
 \subsubsection{Time complexity for LIS computation}
 Overview of their approach to D\&C in patience sorting and their complexity
 
-\subsection{New results}
-\subsubsection{Length computation}
+\section{New results}
+\subsection{Length computation}
 We provide a tighter analysis of the Patience Sorting algorithm presented in \cite{kiyomi2017space}. We show that the algorithm runs in $O\!\left(\max(n \log n, \frac{n^2}{s})\right)$ time, improving the previous $O(\frac{n^2}{s} \log n)$ bound.
 
 \begin{definition}
