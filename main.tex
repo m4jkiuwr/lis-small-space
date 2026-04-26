@@ -100,13 +100,13 @@ We define basic notions as follows:
     \[
     a_{i_1} < a_{i_2} < \cdots < a_{i_\ell}.
     \]
-    \item A \emph{longest increasing subsequence} of $A$ is denoted by $L(A)$; if multiple optimal subsequences exist, $L(A)$ can represent any one of them.
-    \item The length of $L(A)$:
+    \item Set of \emph{longest increasing subsequences} of $A$ is denoted by $L(A)$
+    \item The length of any sequence from $L(A)$:
     \[
     |L(A)|=\max\left\{\ell : \exists\, i_1 < \cdots < i_\ell | a_{i_1} < \cdots < a_{i_\ell}\right\}.
     \]
 \end{itemize}
-There are two usual problems; we can either ask for computing $L(A)$, or just its length $|L(a)|$
+There are two usual problems; we can either ask for computing any sequence $S \in L(A)$ or ask for $|L(A)|$
 \end{definition}
 
 We use the RAM model, where the input sequence is read-only and the algorithm has $O(s)$ auxiliary words.
@@ -169,7 +169,22 @@ It is established in \cite{kiyomi2017space} that $K = O(\frac{n}{s})$, which giv
 T(n,s) = O\!\left(\frac{n^2}{s} + \log{s}*O(n)\right) = O\!\left(max(n\log{n}, \frac{n^2}{s})\!\right).
 \]
 \subsubsection{LIS computation}
-To recover an LIS, we present an alternative divide-and-conquer algorithm which, combined with the improved length bound, runs in $O\!\left(\max(n \log n \log \log s, n^2/s)\right)$ time. This improves on the earlier $O(n^2 \log^2(s) / s)$ result.
+To compute a sequence $S \in L(A)$, we present an alternative divide-and-conquer algorithm which, combined with the improved length bound, runs in $O\!\left(\max(n \log n \log \log s, n^2/s)\right)$ time. This improves on the earlier $O(n^2 \log^2(s) / s)$ result.
+
+\begin{definition}
+\begin{itemize}
+    Given an element $x \in A$ for an array $A$
+    \item $L_x(A)$ -- a set of \emph{longest increasing subsequences} of $A$ ending on an element $x$.
+\end{itemize}
+\end{definition}
+\begin{claim} 
+$L(A) = \sum{L_x(A) | x \in P_{|L(A)|}}$
+\end{claim}
+\begin{proof}
+By $Pile$ definition all \emph{longest increasing subsequences} ending on element x \in $P_i$ have length $i$ for any $i$
+\end{proof}
+It follows that our objective is to find a sequence $S \in L_x(A)$, where $x$ is any element that belongs to the $last Pile$.
+
 
 \section{Summary}
 \subsection{Conclusion}
