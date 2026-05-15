@@ -7,43 +7,80 @@
 \usepackage{geometry}
 \geometry{
     a4paper,
-    left=30mm, 
-    right=20mm,
+    left=25mm, 
+    right=25mm,
     top=25mm,
-    bottom=25mm
+    bottom=25mm,
+    headheight=15pt,
+    headsep=10mm,
+    footskip=12mm
 }
 \usepackage{setspace}
 \onehalfspacing 
-\usepackage{lmodern} 
+\usepackage{lmodern}
+\usepackage{microtype} 
 
 \usepackage{amsmath, amssymb, amsthm}
-\usepackage{xcolor} 
+\usepackage{xcolor}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{\nouppercase{\leftmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
 
 \usepackage{tcolorbox}
 \tcbuselibrary{skins, breakable, theorems}
 
 \usepackage{algorithm}
-\usepackage{algpseudocode}
+\usepackage[noend]{algpseudocode}
 
 \usepackage{graphicx}
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
-    linkcolor=blue,
-    filecolor=magenta,      
-    urlcolor=cyan,
-    citecolor=blue,
+    linkcolor=black!70!blue,
+    filecolor=black!70!red,      
+    urlcolor=black!70!blue,
+    citecolor=black!70!blue,
     pdftitle={Longest Increasing Subsequence},
     pdfauthor={Mikołaj Owczarz}
 }
 
 \usepackage[backend=biber, style=ieee]{biblatex}
-\addbibresource{bibliography.bib} 
+\addbibresource{bibliography.bib}
+
+\usepackage{titlesec}
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt}
+\titlespacing*{\section}{0pt}{14pt plus 4pt minus 2pt}{10pt plus 2pt minus 2pt}
+\titlespacing*{\subsection}{0pt}{12pt plus 3pt minus 2pt}{8pt plus 2pt minus 2pt} 
 
 
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}[chapter]
 \newtheorem{lemma}[theorem]{Lemma}
+
+\newcommand{\Lis}{\textsc{LIS}}
+\newcommand{\LisLen}{\textsc{LIS-LENGTH}}
+\newcommand{\Psort}{\textsc{Patience Sorting}}
+\newcommand{\Ppass}{\textsc{Patience Pass}}
+
+\newcommand{\problembox}[3]{
+    \begin{tcolorbox}[
+        colback=gray!5!white,      
+        colframe=gray!60!black,    
+        arc=3pt,                   
+        boxrule=1pt,               
+        left=8pt, right=8pt, top=8pt, bottom=8pt
+    ]
+        \textbf{Problem:} #1 \\[1.5ex]
+        \textbf{Input:} #2 \\[1.5ex]
+        \textbf{Output:} #3
+    \end{tcolorbox}
+}
+
+
 
 \tcbset{
     statementbox/.style={
@@ -63,23 +100,32 @@
 \newtheorem{claim}[theorem]{Claim}
 \tcolorboxenvironment{claim}{statementbox}
 
+\newtheorem{observation}[theorem]{Observation}
+\tcolorboxenvironment{observation}{statementbox}
+
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[chapter]
 \tcolorboxenvironment{definition}{statementbox}
 
 
 \title{\textbf{Longest Increasing Subsequence Problem in Small Space, revisited\\}}
-\author{Mikołaj Owczarz \\ \vspace{0.5cm} \\ 
-University of Wrocław}
-\date{April 2026}
+
+\date{\today}
 
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-ABSTRACT ABSTRACT ABSTRACT ABSTRACT ABSTRACT ABSTRACT
+Given an input array of comparable elements, we are to find either a longest increasing subsequence, or its length using parametrised space.
+It is well known that this problem can be solved in $\mathcal{O}(n \log(n))$ time without constrained memory. For parametrised memory - $s$, where
+$\sqrt{n} \leq s \leq n$ we present an improved analysis of $Patience\ Sorting$ algorithm presented in \cite{kiyomi2017space}. We show that the length computation runs in $\mathcal{O}(\max(n \log(n), \frac{n^2}{s}))$ time.
+We also show an improved $D \& C$ algorithm for obtaining the sequence running in $\mathcal{O}(\max(n \log(n) \log(\log (s)), \frac{n^2}{s}))$ time, while using $\mathcal{O}(s \log(n))$ bits.
 \end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \tableofcontents
 \newpage
@@ -88,60 +134,175 @@ ABSTRACT ABSTRACT ABSTRACT ABSTRACT ABSTRACT ABSTRACT
 The longest increasing subsequence (LIS for short) problem is a classic algorithmic problem with applications in areas such as sequence analysis, pattern discovery, and optimization. Given a sequence of numbers, the task is to find a longest subsequence whose elements appear in strictly increasing order while preserving their original order, or to compute length of such sequence.
 Although the LIS problem has been studied extensively in many variants, the trade-off between time and space remains relevant when the input is large or memory is limited. In this paper, we focus on computing both the length of an LIS and an actual LIS using small auxiliary space. First contribution regards a tighter analysis of the Patience Sorting based approach introduced by Kiyomi et al.~\cite{kiyomi2017space}, showing that the length can be computed in $O\!\left(\max(n \log n, n^2/s)\right)$ time. We also provide an alternative divide-and-conquer method for recovering the sequence, which combined with the improved length analysis shows an algorithm working in $O\!\left(\max(n \log n \log \log s, n^2/s)\right)$ time.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Preliminaries}
-\subsubsection{LIS problem}
-We consider the standard longest increasing subsequence problem on an input sequence $A=(a_1,\ldots,a_n)$ of comparable elements.
+\section{Preliminaries}
 
-\begin{definition}
-We define basic notions as follows:
+We define two variants of the Longest Increasing Subsequence problem.
+
+\problembox
+{Longest increasing Subsequence (\Lis)}
+{A sequence of $n$ numbers $A = (a_1, a_2, \dots, a_n)$.}
+{The longest subsequence $(a_{i_1}, a_{i_2}, \dots, a_{i_k})$ of $A$ such that $i_1 < i_2 < \dots < i_k$ and $a_{i_1} < a_{i_2} < \dots < a_{i_k}$.}
+
+\problembox
+{Lenght of \Lis \ (\LisLen)}
+{A sequence of $n$ numbers $A = (a_1, a_2, \dots, a_n)$.}
+{$k$ - maximal integer such that there exist an increasing subsequence in $A$ of length $k$}
+
+
+We use the RAM model, where the input sequence is read-only, and the working memory is limited to $\mathcal{O}(s)$ words.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Patience Sorting}
+Our algorithm is based on the classic \Psort. Let us define basic notions used by this algorithm. The idea is to maintain a sequence of stacks referred to as $Piles$. During single passing through
+$A$, given an element $x\in A$, algorithm places $x$ on the top of the leftmost $Pile$ whose top element is greater or equal to $x$, 
+or creates a new, empty $Pile$, and pushes $x$ to it. We present the variant solving \LisLen\ problem.
+
+
+\begin{algorithm}
+  \caption{\Psort}
+  \begin{algorithmic}[1]
+    \State initialize $P_{0}$ with the single element $-\infty$
+    \State set $k := 0$
+    \For{$x \in A$}
+        \If{$x > \text{top} (P_{k})$}
+            \State set $k := k + 1$
+            \State create an empty $Pile$, $P_{k}$, and push $x$ to $P_{k}$
+        \Else
+            \State set $h$ to be the smallest index with $x \leq \text{top}(P_h)$, and push $x$ to $P_h$
+        \EndIf
+    \EndFor
+    \State \Return $k$
+  \end{algorithmic}
+\end{algorithm}
+
+
+\begin{observation}
+Element $x \in P_i$ $if\ and\ only\ if$ a $longest\ increasing\ subsequence$ of $A$ ending at $x$ is of length $i$
+\end{observation}
+
+% \begin{colloraly}
+% To find \LisLen\ it suffices to know the index of the $last\ Pile$ and every $longest\ increasing\ subsequence$ of $A$ ends on an element that belongs to the $last\ Pile$
+% \end{colloraly}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Space parametrised Patience Sorting}
+Assume now that we are given a value $s$ that limits our working memory to $\mathcal{O}(s)$ words.
+We define, and make some observations about the space-paramerised version of \Psort that originates from \cite{kiyomi2017space}. Idea behind this algorithm
+is to compute a $Pile$ $P_j$ using only information about previously computed $P_i$, where $i<j$ until $j$ is actually the answer to \LisLen and we can terminate.
+Let us define a procedure that represents single pass-through the $A$ during the algorithm as \Ppass. Single \Ppass is consisted of 2 passes through $A$. 
+The first one is used to compute $|P_k|$ for $i < k \leq i + 2s$ to establish $j$, the second one returns $P_j$. 
+
+\begin{observation}
+Let $x \in P_j$ and $j \neq i$. If $y$ was top$(P_i)$ when $x$ was pushed to $P_j$, then
 \begin{itemize}
-    \item An \emph{increasing subsequence} is a sequence of indices $1 \le i_1 < \cdots < i_\ell \le n$ such that
-    \[
-    a_{i_1} < a_{i_2} < \cdots < a_{i_\ell}.
-    \]
-    \item Set of \emph{longest increasing subsequences} of $A$ is denoted by $L(A)$
-    \item The length of any sequence from $L(A)$:
-    \[
-    |L(A)|=\max\left\{\ell : \exists\, i_1 < \cdots < i_\ell | a_{i_1} < \cdots < a_{i_\ell}\right\}.
-    \]
+\item $x < y$ if $j < i$
+\item $x > y$ if $j > i$
+\end{itemize} 
+\end{observation}
+This observation allows us to define the $filtering$ method for the \Ppass\ procedure. We will process the input like in \Psort, but we will $filter\ out$ (ignore)
+the elements from $P_k$ where $k < i$ or $k > i + 2s$. Aside from $P_i$ we maintain an index $h$ of the most recently read element that belongs to $P_i$. 
+Reading an element $x$ can lead to three cases:
+\begin{itemize}
+\item If $x$ is $P_i(h+1)$ (the next element of $P_i$) $\rightarrow h := h+1$
+\item Else if $x < P_i(h)$, then $x \in P_k$ where $k < i$ $\rightarrow x$ is ignored
+\item Otherwise $x > P_i(h)$, then $x \in P_k$ where $k > i$ 
 \end{itemize}
-There are two usual problems; we can either ask for computing any sequence $S \in L(A)$ or ask for $|L(A)|$
-\end{definition}
+In the last case, we need to check if $k > i + 2*s$, and calculate the exact value of $k$ if not. Thus it leads to two additional cases:
+\begin{itemize}
+\item If no element among those read before $x$ belong to $P_{i+2s}$, then $x \in P_k$, $k \leq i + 2s$
+\item Otherwise, let $y := \text{top}(P_{i+2s})$. We compare $x$ and $y$
+    \begin{itemize}
+        \item If $x > y$, then $x \in P_k$, $k > i + 2s$ $\rightarrow x$ is ignored.
+        \item Otherwise $x \in P_k$, $k < i + 2s$. 
+    \end{itemize}
+\end{itemize}
+Notice that in all but two of the cases we have made $\mathcal{O}(1)$ operations while processing element $x$. Let us call what we do in rest of the cases
+an $expensive\ filter$. 
 
-We use the RAM model, where the input sequence is read-only and the algorithm has $O(s)$ auxiliary words.
-\subsubsection{Patience Sorting}
-Overview of the classic algorithm (with all piles)
-\subsubsection{Space parametrised Patience Sorting}
-Overview of the algorithm Kiyomi et al.~\cite{kiyomi2017space}
+\begin{observation}
+$expensive\ filter$ runs in time $\mathcal{O}(\log(s))$. Notice that $expensive\ filter$ purpose is to find $k$, where $i < k < i+2s$, such that $x \in P_k$.
+Then, if we maintain top elements of the $Piles$, using their monotonicity, we can find $k$ via binary searching over interval of length $\mathcal{O}(s)$.
+\end{observation}
 
-\subsection{Previous results}
-\subsubsection{Time complexity for length computation}
-Time complexity for patience sorting from Kiyomi et al.~\cite{kiyomi2017space}
-\subsubsection{Time complexity for LIS computation}
-Overview of their approach to D\&C in patience sorting and their complexity
+
+
+
+\begin{algorithm}
+    \caption{First pass in \Ppass, assume $P_i$ is given, and $|P_i| < s$}
+    \begin{algorithmic}[1]
+    \State set $h := 0$ \Comment{\textcolor{gray}{$h$ points to the most recently read element in $P_{i}$}}
+    \State set $r := 0$ \Comment{\textcolor{gray}{Is the index of the current rightmost $Pile$}}
+    \State set $p_{i+1}, p_{i+2}, \ldots, p_{i+2s}$ to $\infty$ \Comment{\textcolor{gray}{$p_k$ is the current $\text{top}(P_{k})$}}
+    \State set $c_{i+1}, c_{i+2}, \ldots, c_{i+2s}$ to $0$ \Comment{\textcolor{gray}{$c_k$ is the current size of $P_k$}}
+    \For{$ x \in A$} 
+
+        \If{$x$ is $P_i(h+1)$} \Comment{\textcolor{gray}{$x$ is the next element in $P_i$}}
+            \State set $h := h + 1$ 
+            \State continue
+        \ElsIf {$x < P_i(h)$ or $x > p_{i+2s}$} \Comment{\textcolor{gray}{$x$ belongs to the $P_k$ where $k < i \vee k > i+2s$}}
+            \State continue
+        \EndIf
+
+        \If{$x > p_r$}
+            \State set $r := r + 1$ and $k := r$
+        \Else
+            \State set $k$ to be the smallest such that $x < p_k$
+        \EndIf
+            
+        \State set $p_k := x$ and $c_k := c_k + 1$
+    \EndFor
+    
+    \State set $j$ to be the biggest, such that $0 < c_j <= s$
+    
+    \Return $j$
+    \end{algorithmic}
+\end{algorithm}
+
+It is easy to see how to modify the procedure to compute the $P_j$ if $j$ is given.
+
+\begin{observation}
+Since $s > sqrt{n}$ there is at most $frac{n}{s} \leq s$ $Piles$ with more than $s$ elements which implies that $j > i + s$ 
+\end{observation}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{New results}
-\subsection{Length computation}
-We provide a tighter analysis of the Patience Sorting algorithm presented in \cite{kiyomi2017space}. We show that the algorithm runs in $O\!\left(\max(n \log n, \frac{n^2}{s})\right)$ time, improving the previous $O(\frac{n^2}{s} \log n)$ bound.
 
-\begin{definition}
-Let us define the parameters of Patience Sort as follows:
-\begin{itemize}
-    \item $K$ -- the number of passes over the input.
-    \item $j_i$ (for $i \in \{1,\ldots,K\}$) -- the index of the largest pile kept in memory after the $i$-th pass, with $j_0=0$.
-    \item $W_i$ -- the number of expensive filter operations during the $i$-th pass.
-\end{itemize}
-Then the running time can be written as:
-\[
-T(n,s) = O\!\left(nK + \log(s)\sum_{i=1}^K W_i\right).
-\]
+\subsection{Length computation}
+We provide a tighter time complexity analysis of the \Psort algorithm presented in \cite{kiyomi2017space}. 
+We show that the algorithm runs in $\mathcal{O}(\max(n \log (n), \frac{n^2}{s}))$ time, improving the previous $\mathcal{O}(\frac{n^2}{s} \log (n))$ bound.
+
+\begin{definition}{name}
+Let $j_i$ be the index of the $Pile$ kept in memory after $i$-th \Ppass\ with $j_0=0$
 \end{definition}
 
-\begin{claim} \label{claim:linear-filters}
-The total number of expensive filter operations is linear, i.e.,
+\begin{definition}{name}
+Let $W_i$ be the number of $expensive\ filter$ operations during the $i$-th \Ppass\
+\end{definition}
+
+\begin{definition}{name}
+Let $K$ be the total number of \Ppass\-es
+\end{definition}
+
+Notice that time complexity of space parametrised \Psort\ for $\sqrt{n} \leq s \leq n$ can be then written as:
 \[
-\sum_{i=1}^K W_i = O(n).
+T(n,s) = \mathcal{O}(nK + \log(s) * \sum_{i=1}^K W_i).
+\]
+
+\begin{claim} \label{claim:linear-filters}
+The total number of $expensive\ filter$ operations is linear, i.e.,
+\[
+\sum_{i=1}^K W_i = \mathcal{O}(n).
 \]
 \end{claim}
 
@@ -161,15 +322,19 @@ By \cite{kiyomi2017space} we have $j_i \ge j_{i-1}+s$. This implies that the lef
 \[
 \sum_{i=1}^K \sum_{k \in I_i} |P_k| \le 2\sum_{k=1}^n |P_k| = 2n.
 \]
-Thus, we get $\sum_{i=1}^K W_i \le 4n = O(n)$.
+Thus, we get $\sum_{i=1}^K W_i \le 4n = \mathcal{O}(n)$.
 \end{proof}
 
-It is established in \cite{kiyomi2017space} that $K = O(\frac{n}{s})$, which gives us the total running time:
+It is established in \cite{kiyomi2017space} that $K \text{ is } \mathcal{O}(\frac{n}{s})$, which gives us the total running time:
 \[
-T(n,s) = O\!\left(\frac{n^2}{s} + \log{s}*O(n)\right) = O\!\left(max(n\log{n}, \frac{n^2}{s})\!\right).
+T(n,s) = \mathcal{O}(\frac{n^2}{s} + \log{s}*\mathcal{O}(n)) \text{ which is } \mathcal{O}(max(n\log(n), \frac{n^2}{s})).
 \]
-\subsubsection{LIS computation}
-To compute a sequence $S \in L(A)$, we present an alternative divide-and-conquer algorithm which, combined with the improved length bound, runs in $O\!\left(\max(n \log n \log \log s, n^2/s)\right)$ time. This improves on the earlier $O(n^2 \log^2(s) / s)$ result.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{LIS computation}
+To \Lis, we present an alternative divide-and-conquer algorithm which, combined with the improved length bound, runs in $\mathcal{O}(\max(n \log n \log \log s, n^2/s))$ time. This improves on the earlier $O(n^2 \log^2(s) / s)$ result.
 
 \begin{definition}
 \begin{itemize}
@@ -181,10 +346,15 @@ To compute a sequence $S \in L(A)$, we present an alternative divide-and-conquer
 $L(A) = \sum{L_x(A) | x \in P_{|L(A)|}}$
 \end{claim}
 \begin{proof}
-By $Pile$ definition all \emph{longest increasing subsequences} ending on element x \in $P_i$ have length $i$ for any $i$
+By $Pile$ definition all \emph{longest increasing subsequences} ending on element x $\in P_i$ have length $i$ for any $i$.
 \end{proof}
-It follows that our objective is to find a sequence $S \in L_x(A)$, where $x$ is any element that belongs to the $last Pile$.
+It follows that our objective is to find a sequence $S \in L_x(A)$, where $x$ is any element that belongs to the $last\ Pile$.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Algorithm preformance results}
 
 \section{Summary}
 \subsection{Conclusion}
