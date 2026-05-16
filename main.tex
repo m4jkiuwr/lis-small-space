@@ -291,7 +291,7 @@ Let $W_i$ be the number of $expensive\ filter$ operations during the $i$-th \Ppa
 \end{definition}
 
 \begin{definition}{name}
-Let $K$ be the total number of \Ppass\-es
+Let $K$ be the total number of \Ppass -es
 \end{definition}
 
 Notice that time complexity of space parametrised \Psort\ for $\sqrt{n} \leq s \leq n$ can be then written as:
@@ -327,21 +327,26 @@ Thus, we get $\sum_{i=1}^K W_i \le 4n = \mathcal{O}(n)$.
 
 It is established in \cite{kiyomi2017space} that $K \text{ is } \mathcal{O}(\frac{n}{s})$, which gives us the total running time:
 \[
-T(n,s) = \mathcal{O}(\frac{n^2}{s} + \log{s}*\mathcal{O}(n)) \text{ which is } \mathcal{O}(max(n\log(n), \frac{n^2}{s})).
+T(n,s) = \mathcal{O}(\frac{n^2}{s}) + \log{s}*\mathcal{O}(n) \text{ which is } \mathcal{O}(max(n\log(n), \frac{n^2}{s})).
 \]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{LIS computation}
-To \Lis, we present an alternative divide-and-conquer algorithm which, combined with the improved length bound, runs in $\mathcal{O}(\max(n \log n \log \log s, n^2/s))$ time. This improves on the earlier $O(n^2 \log^2(s) / s)$ result.
+To \Lis, we present an alternative divide-and-conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\max(n \log (n) \log( \log (s)), \frac{n^2}/{s}))$ time. This improves on the earlier $O(frac{n^2 \log^2(s)}{s})$ result.
 
 \begin{definition}
+For $x \in A$, let:
 \begin{itemize}
-    Given an element $x \in A$ for an array $A$
-    \item $L_x(A)$ -- a set of \emph{longest increasing subsequences} of $A$ ending on an element $x$.
+\item $L_{\leq x}$ be a valid answer to \Lis\ for $\{y \in A \mid y \leq x \land y \text{ is before } x \text{ in } A\}$
+\item $L_{\geq x}$ be a valid answer to \Lis\ for $\{y \in A \mid y \geq x \land y \text{ is after } x \text{ in } A\}$
+
 \end{itemize}
 \end{definition}
+
+
+
 \begin{claim} 
 $L(A) = \sum{L_x(A) | x \in P_{|L(A)|}}$
 \end{claim}
