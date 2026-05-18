@@ -26,7 +26,6 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[C]{\nouppercase{\leftmark}}
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.5pt}
 
@@ -181,7 +180,7 @@ or creates a new, empty $Pile$, and pushes $x$ to it. We present the variant sol
 \end{algorithm}
 
 
-\begin{observation}
+\begin{observation}\label{obs:pile}
 Element $x \in P_i$ $if\ and\ only\ if$ a $longest\ increasing\ subsequence$ of $A$ ending at $x$ is of length $i$
 \end{observation}
 
@@ -215,7 +214,7 @@ Reading an element $x$ can lead to three cases:
 \item Else if $x < P_i(h)$, then $x \in P_k$ where $k < i$ $\rightarrow x$ is ignored
 \item Otherwise $x > P_i(h)$, then $x \in P_k$ where $k > i$ 
 \end{itemize}
-In the last case, we need to check if $k > i + 2*s$, and calculate the exact value of $k$ if not. Thus it leads to two additional cases:
+In the last case, we need to check if $k > i + 2s$, and calculate the exact value of $k$ if not. Thus it leads to two additional cases:
 \begin{itemize}
 \item If no element among those read before $x$ belong to $P_{i+2s}$, then $x \in P_k$, $k \leq i + 2s$
 \item Otherwise, let $y := \text{top}(P_{i+2s})$. We compare $x$ and $y$
@@ -327,33 +326,52 @@ Thus, we get $\sum_{i=1}^K W_i \le 4n = \mathcal{O}(n)$.
 
 It is established in \cite{kiyomi2017space} that $K \text{ is } \mathcal{O}(\frac{n}{s})$, which gives us the total running time:
 \[
-T(n,s) = \mathcal{O}(\frac{n^2}{s}) + \log{s}*\mathcal{O}(n) \text{ which is } \mathcal{O}(max(n\log(n), \frac{n^2}{s})).
+T(n,s) = \mathcal{O}(\frac{n^2}{s}) + \mathcal{O}(n)\log(s) \text{ which is } \mathcal{O}(max(n\log(n), \frac{n^2}{s})).
 \]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{LIS computation}
-To \Lis, we present an alternative divide-and-conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\max(n \log (n) \log( \log (s)), \frac{n^2}/{s}))$ time. This improves on the earlier $O(frac{n^2 \log^2(s)}{s})$ result.
+To \Lis, we present an alternative divide-and-conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\max(n \log (n) \log( \log (s)), \frac{n^2}{s}))$ time. This improves on the earlier $\mathcal{O}(\frac{n^2}{s} \log^2(s))$ result.
 
 \begin{definition}
-For $x \in A$, let:
-\begin{itemize}
-\item $L_{\leq x}$ be a valid answer to \Lis\ for $\{y \in A \mid y \leq x \land y \text{ is before } x \text{ in } A\}$
-\item $L_{\geq x}$ be a valid answer to \Lis\ for $\{y \in A \mid y \geq x \land y \text{ is after } x \text{ in } A\}$
+For $x \in A$ let $\textsc{Lis}_x$ be the $longest\ increasing\ subsequence$ of $A$ ending in $x$.
+\end{definition}
 
+\begin{definition}
+For integer $x$, let:
+\begin{itemize}
+\item $L_{\leq x}$ be a valid answer to \Lis\ for $\{y \in A \mid y \leq x \}$
+\item $L_{>x}$ be a valid answer to \Lis\ for $\{y \in A \mid y > x \}$
 \end{itemize}
 \end{definition}
 
+Let $A_{\ell}$ and $A_r$ be the left and right halves of $A$ respectively. Our goal is to efficiently find an element $m$ such that
+concatenation of $L_{\leq m}$ for $A_\ell$ and $L_{> m}$ for $A_r$ is an answer to \Lis for original input $A$.
 
+\begin{definition}
+For $x \in A$ let pred$(x) \in A_\ell$ be such that there is a valid $\textsc{Lis}_x$ in $A$
+such that the last element of it belonging to $A_\ell$ is pred$(x)$
+\end{definition}
 
-\begin{claim} 
-$L(A) = \sum{L_x(A) | x \in P_{|L(A)|}}$
+\begin{claim} Let $x \in P_i$, then \\
+pred$(x) = \begin{cases}
+x & \text{if } x \in A_\ell \\
+null & \text{if } x \in A_r \land i = 1 \\
+\text{pred}(y) & \text{where } y = \text{top}(P_{i-1}) \text{ when } x \text{ was being read }
+\end{cases}$
 \end{claim}
+
 \begin{proof}
-By $Pile$ definition all \emph{longest increasing subsequences} ending on element x $\in P_i$ have length $i$ for any $i$.
+If $x \in A_\ell$ its trivial, so assume $x \in A_r$. Now, if $x \in P_1$, then the $\textsc{Lis}_x$ is of
+length $1$, thus it is $(x)$, so the pred$(x)$ does not exist. Now, assume that $x \in A_r \land x \in P_i \land i > 1$. Then  
+$\textsc{Lis}_x$ is of length $i$. Since at the moment of reading $x$, $y = \text{top}(P_{i-1})$ is smaller than $x$, and $x$ is later in $A$ than $y$, if we append $x$ to $\textsc{Lis}_y$ it is still a valid $increasing\ subsequence$.
+Notice that since length of $\textsc{Lis}_y$ is $i-1$, by appending $x$ to it we obtained $\textsc{Lis}_x$. Since $x \in A_r$ the last element belonging to $A_\ell$ in $\textsc{Lis}_x$ is the same one that in $\textsc{Lis}_y$ making pred$(x)$ = pred$(y)$.  
 \end{proof}
-It follows that our objective is to find a sequence $S \in L_x(A)$, where $x$ is any element that belongs to the $last\ Pile$.
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
