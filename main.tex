@@ -157,53 +157,69 @@ We use the RAM model, where the input sequence is read-only, and the working mem
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Patience Sorting}
-Our algorithm is based on the classic \Psort. Let us define basic notions used by this algorithm. The idea is to maintain a sequence of stacks referred to as $Piles$. During single passing through
-$A$, given an element $x\in A$, algorithm places $x$ on the top of the leftmost $Pile$ whose top element is greater or equal to $x$, 
-or creates a new, empty $Pile$, and pushes $x$ to it. We present the variant solving \LisLen\ problem.
 
+Our algorithm is based on the classic \Psort. Let us define basic notions use throughout the algorithm. Idea of the algorithm is based
+on maintaining $Piles$\ -- stacks of integers such that for all $x \in A$, $x$ belongs to the $i$-th pile iff. the $longest\ increasing\ subsequence$ of $A$ ending in $x$ has length $i$.
+Since \Psort\, both classic, and space-parametrised is based on sequential passes through the input sequence we define
+pile operations with respect to time when they are being used.
+
+\begin{definition}
+For integers $i, t$ we refer to the state $i$-th pile after reading first $t$ elements of the input sequence as $P_{i}^{t}$, and $P_i$ will represent the $i$-th pile after reading the whole input sequence. \\
+Let $P$ be some state of the pile (for example $P_3^4$ or $P_2$).
+\begin{itemize}
+\item $|P|$ is the number of elements that belongs to $P$
+\item $\operatorname{top}(P)$ refers to the element on the top of the pile (the one that was added most recently to it), or null if $P$ is empty.
+\item For integer $j$, $P[j]$ is the $j$-th element of $P$, where $\operatorname{top}(P) = P[|P|]$, and $P[0]$ is the element on the bottom of $P$. 
+\end{itemize}
+\end{definition}
+
+It follows from the definition of pile that if we are solving the \LisLen\ problem, then our goal is to compute the largest integer $k$ such that $P_k$ is non-empty.
+Classic \Psort\ algorithm achieves that by constructing all piles during a single passing through the input sequence. When reading the $t$-th element of $A$ - $a_t$, we find
+the smallest $i$ such that $\operatorname{top}(P_i^{t-1}) \geq a_t$ and we push $a_t$ to the top of the $i$-th pile, or we create a new, rightmost pile with a single element $a_t$.
+Below is depicted the \Psort\ algorithm for solving \LisLen.
 
 \begin{algorithm}
-  \caption{\Psort}
-  \begin{algorithmic}[1]
-    \State initialize $P_{0}$ with the single element $-\infty$
-    \State set $k := 0$
-    \For{$x \in A$}
-        \If{$x > \text{top} (P_{k})$}
-            \State set $k := k + 1$
-            \State create an empty $Pile$, $P_{k}$, and push $x$ to $P_{k}$
-        \Else
-            \State set $h$ to be the smallest index with $x \leq \text{top}(P_h)$, and push $x$ to $P_h$
-        \EndIf
-    \EndFor
-    \State \Return $k$
+    \caption{\Psort}
+    \begin{algorithmic}[1]
+        \State initialize $P_{0}$ with the single element $-\infty$
+        \State set $k := 0$
+        \For{$x \in A$}
+            \If{$x > \text{top} (P_{k})$}
+                \State set $k := k + 1$
+                \State create an empty $Pile$, $P_{k}$, and push $x$ to $P_{k}$
+            \Else
+                \State set $h$ to be the smallest index with $x \leq \text{top}(P_h)$, and push $x$ to $P_h$
+            \EndIf
+        \EndFor
+        \State \Return $k$
   \end{algorithmic}
 \end{algorithm}
 
 
 \begin{observation}\label{obs:pile}
-Element $x \in P_i$ $if\ and\ only\ if$ a $longest\ increasing\ subsequence$ of $A$ ending at $x$ is of length $i$
+This procedure correctly computes piles, in other words. \\
+Element $x \in P_i$ iff. a $longest\ increasing\ subsequence$ of $A$ ending at $x$ is of length $i$
 \end{observation}
 
-% \begin{colloraly}
-% To find \LisLen\ it suffices to know the index of the $last\ Pile$ and every $longest\ increasing\ subsequence$ of $A$ ends on an element that belongs to the $last\ Pile$
-% \end{colloraly}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \subsection{Space parametrised Patience Sorting}
-Assume now that we are given a value $s$ that limits our working memory to $\mathcal{O}(s)$ words.
-We define, and make some observations about the space-paramerised version of \Psort that originates from \cite{kiyomi2017space}. Idea behind this algorithm
-is to compute a $Pile$ $P_j$ using only information about previously computed $P_i$, where $i<j$ until $j$ is actually the answer to \LisLen and we can terminate.
-Let us define a procedure that represents single pass-through the $A$ during the algorithm as \Ppass. Single \Ppass is consisted of 2 passes through $A$. 
-The first one is used to compute $|P_k|$ for $i < k \leq i + 2s$ to establish $j$, the second one returns $P_j$. 
+Assume now that our working memory is limited to $\mathcal{O}(s)$ words, where $\sqrt{n} \leq s \leq n$.
+We define the space-paramerised version of \Psort\ that originates from \cite{kiyomi2017space}. 
+In contrast to the classic \Psort, in this version of algorithm we will pass through $A$ multiple times, each time preserving a single pile in memory.
+We will call a single pass through a \Ppass. This procedure assumes that we have a pile $P_i$ stored in memory and calculates another pile $P_j$ guaranteeing that $i + s < j < i + 2s$.
+Single \Ppass is consisted of 2 passes through $A$. 
+The first one is used to compute $|P_k|$ for $i < k \leq i + 2s$ to establish $j$, the second one returns $P_j$, or $\operatorname{top}(P_j)$ if $j$ is \LisLen. 
 
 \begin{observation}
-Let $x \in P_j$ and $j \neq i$. If $y$ was top$(P_i)$ when $x$ was pushed to $P_j$, then
+Suppose we are reading the $t$-th element of $A$ -- $a_t$ and $a_t \in P_j$. Let $i$ be some fixed integer. \\
+If $j \neq i$ and $b = \operatorname{top}(P_i^{t-1})$, then 
 \begin{itemize}
-\item $x < y$ if $j < i$
-\item $x > y$ if $j > i$
+\item $a_t < b$ if $j < i$
+\item $a_t > b$ if $j > i$
 \end{itemize} 
 \end{observation}
 This observation allows us to define the $filtering$ method for the \Ppass\ procedure. We will process the input like in \Psort, but we will $filter\ out$ (ignore)
@@ -227,7 +243,7 @@ Notice that in all but two of the cases we have made $\mathcal{O}(1)$ operations
 an $expensive\ filter$. 
 
 \begin{observation}
-$expensive\ filter$ runs in time $\mathcal{O}(\log(s))$. Notice that $expensive\ filter$ purpose is to find $k$, where $i < k < i+2s$, such that $x \in P_k$.
+$expensive\ filter$ takes $\mathcal{O}(\log(s))$ time. Notice that $expensive\ filter$ purpose is to find $k$, where $i < k < i+2s$, such that $x \in P_k$.
 Then, if we maintain top elements of the $Piles$, using their monotonicity, we can find $k$ via binary searching over interval of length $\mathcal{O}(s)$.
 \end{observation}
 
@@ -308,7 +324,7 @@ The total number of $expensive\ filter$ operations is linear, i.e.,
 \begin{proof}
 For each pass $i \in \{1, \dots, K\}$, let us define the active interval $I_i = (j_{i-1}, j_{i-1}+2s]$.
 
-Fix a pass $i$. During the first phase of this pass, the expensive filter is invoked only for elements whose pile index belongs to $I_i$. Once the new boundary $j_i$ is determined, the second phase invokes the expensive filter only if the pile index is in $(j_{i-1}, j_i]$. By the properties of the algorithm, we know that $j_i \le j_{i-1} + 2s$, which means $(j_{i-1}, j_i] \subseteq I_i$. Thus, we can see that:
+Fix a pass $i$. During the first phase of this pass, the $expensive\ filter$ is invoked only for elements whose pile index belongs to $I_i$. Once the new boundary $j_i$ is determined, the second phase invokes the $expensive\ filter$ only if the pile index is in $(j_{i-1}, j_i]$. By the properties of the algorithm, we know that $j_i \le j_{i-1} + 2s$, which means $(j_{i-1}, j_i] \subseteq I_i$. Thus, we can see that:
 \[
 W_i \le \sum_{k \in I_i} |P_k| + \sum_{k=j_{i-1}+1}^{j_i} |P_k| \le 2\sum_{k \in I_i} |P_k|.
 \]
@@ -377,7 +393,7 @@ Notice that since length of $\textsc{Lis}_y$ is $i-1$, by appending $x$ to it we
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\section{Algorithm preformance results}
+\section{Algorithm performance results}
 
 \section{Summary}
 \subsection{Conclusion}
