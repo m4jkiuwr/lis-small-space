@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{report}
+\documentclass[12pt,a4paper]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -51,13 +51,12 @@
 \addbibresource{bibliography.bib}
 
 \usepackage{titlesec}
-\titlespacing*{\chapter}{0pt}{-20pt}{20pt}
 \titlespacing*{\section}{0pt}{14pt plus 4pt minus 2pt}{10pt plus 2pt minus 2pt}
 \titlespacing*{\subsection}{0pt}{12pt plus 3pt minus 2pt}{8pt plus 2pt minus 2pt} 
 
 
 \theoremstyle{plain}
-\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
 
 \newcommand{\Lis}{\textsc{LIS}}
@@ -103,7 +102,7 @@
 \tcolorboxenvironment{observation}{statementbox}
 
 \theoremstyle{definition}
-\newtheorem{definition}{Definition}[chapter]
+\newtheorem{definition}{Definition}[section]
 \tcolorboxenvironment{definition}{statementbox}
 
 
@@ -117,9 +116,9 @@
 
 \begin{abstract}
 Given an input array of comparable elements, we are to find either a longest increasing subsequence, or its length using parametrised space.
-It is well known that this problem can be solved in $\mathcal{O}(n \log n)$ time without constrained memory. For parametrised memory - $s$, where
+It is well known that this problem can be solved in $\mathcal{O}(n \log n)$ time without constrained memory. For parametrised memory -- $s$, where
 $\sqrt{n} \leq s \leq n$ we present an improved analysis of $Patience\ Sorting$ algorithm presented in \cite{kiyomi2017space}. We show that the length computation runs in $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time.
-We also show an improved $D \& C$ algorithm for obtaining the sequence running in $\mathcal{O}(\max(n \log n \log \log s, \frac{n^2}{s}))$ time, while using $\mathcal{O}(s \log n)$ bits.
+We also show an improved Divide \& Conquer algorithm for obtaining the sequence running in $\mathcal{O}(\max(n \log n \log \log s, \frac{n^2}{s}))$ time, while using $\mathcal{O}(s \log n)$ bits.
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,7 +147,7 @@ We define two variants of the Longest Increasing Subsequence problem.
 \problembox
 {Lenght of \Lis \ (\LisLen)}
 {A sequence of $n$ numbers $A = (a_1, a_2, \dots, a_n)$.}
-{$k$ - maximal integer such that there exist an increasing subsequence in $A$ of length $k$}
+{$k$ -- maximal integer such that there exist an increasing subsequence in $A$ of length $k$}
 
 
 We use the RAM model, where the input sequence is read-only, and the working memory is limited to $\mathcal{O}(s)$ words.
@@ -174,7 +173,7 @@ Let $P$ be some state of the pile (for example $P_3^4$ or $P_2$).
 \end{definition}
 
 It follows from the definition of pile that if we are solving the \LisLen\ problem, then our goal is to compute the largest integer $k$ such that $P_k$ is non-empty.
-Classic \Psort\ algorithm achieves that by constructing all piles during a single passing through the input sequence. When reading the $t$-th element of $A$ - $a_t$, we find
+Classic \Psort\ algorithm achieves that by constructing all piles during a single passing through the input sequence. When reading the $t$-th element of $A$ -- $a_t$, we find
 the smallest $i$ such that $\operatorname{top}(P_i^{t-1}) \geq a_t$ and we push $a_t$ to the top of the $i$-th pile, or we create a new, rightmost pile with a single element $a_t$.
 Below is depicted the \Psort\ algorithm for solving \LisLen.
 
