@@ -34,6 +34,7 @@
 
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
+\usepackage{float}
 
 \usepackage{graphicx}
 \usepackage{hyperref}
@@ -109,6 +110,7 @@
 \title{\textbf{Longest Increasing Subsequence Problem in Small Space, revisited\\}}
 
 \date{\today}
+\author{Mikołaj Owczarz}
 
 \begin{document}
 
@@ -117,8 +119,8 @@
 \begin{abstract}
 Given an input array of comparable elements, we are to find either a longest increasing subsequence, or its length using parametrised space.
 It is well known that this problem can be solved in $\mathcal{O}(n \log n)$ time without constrained memory. For parametrised memory -- $s$, where
-$\sqrt{n} \leq s \leq n$ we present an improved analysis of $Patience\ Sorting$ algorithm presented in \cite{kiyomi2017space}. We show that the length computation runs in $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time.
-We also show an improved Divide \& Conquer algorithm for obtaining the sequence running in $\mathcal{O}(\max(n \log n \log \log s, \frac{n^2}{s}))$ time, while using $\mathcal{O}(s \log n)$ bits.
+$\sqrt{n} \leq s \leq n$ we present an improved analysis of $Patience\ Sorting$ algorithm presented in \cite{kiyomi2017space}. We show that the length computation runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time.
+We also show an improved Divide \& Conquer algorithm for obtaining the sequence running in $\mathcal{O}(\operatorname{max}(n \log n \log \log s, \frac{n^2}{s}))$ time while using $\mathcal{O}(s \log n)$ bits.
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,7 +149,7 @@ We define two variants of the Longest Increasing Subsequence problem.
 \problembox
 {Lenght of \Lis \ (\LisLen)}
 {A sequence of $n$ numbers $A = (a_1, a_2, \dots, a_n)$.}
-{$k$ -- maximal integer such that there exist an increasing subsequence in $A$ of length $k$}
+{$k$ -- the largest integer such that there exist an increasing subsequence in $A$ of length $k$}
 
 
 We use the RAM model, where the input sequence is read-only, and the working memory is limited to $\mathcal{O}(s)$ words.
@@ -157,7 +159,7 @@ We use the RAM model, where the input sequence is read-only, and the working mem
 
 \subsection{Patience Sorting}
 
-Our algorithm is based on the classic \Psort. Let us define basic notions use throughout the algorithm. Idea of the algorithm is based
+Our algorithm is based on the classic \Psort. Let us define basic notions use throughout the algorithm. The idea of the algorithm is based
 on maintaining $Piles$\ -- stacks of integers such that for all $x \in A$, $x$ belongs to the $i$-th pile iff. the $longest\ increasing\ subsequence$ of $A$ ending in $x$ has length $i$.
 Since \Psort\, both classic, and space-parametrised is based on sequential passes through the input sequence we define
 pile operations with respect to time when they are being used.
@@ -168,7 +170,7 @@ Let $P$ be some state of the pile (for example $P_3^4$ or $P_2$).
 \begin{itemize}
 \item $|P|$ is the number of elements that belongs to $P$
 \item $\operatorname{top}(P)$ refers to the element on the top of the pile (the one that was added most recently to it), or null if $P$ is empty.
-\item For integer $j$, $P[j]$ is the $j$-th element of $P$, where $\operatorname{top}(P) = P[|P|]$, and $P[0]$ is the element on the bottom of $P$. 
+\item For integer $j$, $P[j]$ is the $j$-th element of $P$, where $\operatorname{top}(P) = P[|P|]$, and $P[1]$ is the element on the bottom of $P$. 
 \end{itemize}
 \end{definition}
 
@@ -196,7 +198,7 @@ Below is depicted the \Psort\ algorithm for solving \LisLen.
 
 
 \begin{observation}\label{obs:pile}
-This procedure correctly computes piles, in other words. \\
+This procedure correctly computes piles, in other words: \\
 Element $x \in P_i$ iff. a $longest\ increasing\ subsequence$ of $A$ ending at $x$ is of length $i$
 \end{observation}
 
@@ -204,52 +206,44 @@ Element $x \in P_i$ iff. a $longest\ increasing\ subsequence$ of $A$ ending at $
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 \subsection{Space parametrised Patience Sorting}
-Assume now that our working memory is limited to $\mathcal{O}(s)$ words, where $\sqrt{n} \leq s \leq n$.
-We define the space-paramerised version of \Psort\ that originates from \cite{kiyomi2017space}. 
-In contrast to the classic \Psort, in this version of algorithm we will pass through $A$ multiple times, each time preserving a single pile in memory.
-We will call a single pass through a \Ppass. This procedure assumes that we have a pile $P_i$ stored in memory and calculates another pile $P_j$ guaranteeing that $i + s < j < i + 2s$.
-Single \Ppass is consisted of 2 passes through $A$. 
-The first one is used to compute $|P_k|$ for $i < k \leq i + 2s$ to establish $j$, the second one returns $P_j$, or $\operatorname{top}(P_j)$ if $j$ is \LisLen. 
 
-\begin{observation}
-Suppose we are reading the $t$-th element of $A$ -- $a_t$ and $a_t \in P_j$. Let $i$ be some fixed integer. \\
-If $j \neq i$ and $b = \operatorname{top}(P_i^{t-1})$, then 
+Now we will define the space parametrised variant of \Psort\ that originates from \cite{kiyomi2017space}.
+Assume that our working memory is limited to $\mathcal{O}(s)$ words, and $\sqrt{n} \leq s \leq n$.
+Similarly to the classic \Psort\ we will process the input array $A$ sequentialy, however in contrast to the classic \Psort, 
+each pass-through $A$ will assume an integer $i$ and whole $P_i$ stored in memory.
+We will use the memoised pile to compute $j$ such that $i + s \leq j \leq i + 2s$ or $j$ is the \LisLen, 
+and whole $P_j$ (or just $\operatorname{top}(P_j)$ if $j$ is the \LisLen) guaranteeing that we do not exceed the memory limit.
+
+
+\begin{observation}\label{obs:filtering}
+Suppose we are reading the $t$-th element of $A$ -- $a_t$, and $a_t \in P_j$. Let $i$ be some fixed integer. \\
+If $j \neq i$, then 
 \begin{itemize}
-\item $a_t < b$ if $j < i$
-\item $a_t > b$ if $j > i$
+\item $a_t < \operatorname{top}(P_i^{t-1})$ if $j < i$
+\item $a_t > \operatorname{top}(P_i^{t-1})$ if $j > i$
 \end{itemize} 
 \end{observation}
-This observation allows us to define the $filtering$ method for the \Ppass\ procedure. We will process the input like in \Psort, but we will $filter\ out$ (ignore)
-the elements from $P_k$ where $k < i$ or $k > i + 2s$. Aside from $P_i$ we maintain an index $h$ of the most recently read element that belongs to $P_i$. 
-Reading an element $x$ can lead to three cases:
-\begin{itemize}
-\item If $x$ is $P_i(h+1)$ (the next element of $P_i$) $\rightarrow h := h+1$
-\item Else if $x < P_i(h)$, then $x \in P_k$ where $k < i$ $\rightarrow x$ is ignored
-\item Otherwise $x > P_i(h)$, then $x \in P_k$ where $k > i$ 
-\end{itemize}
-In the last case, we need to check if $k > i + 2s$, and calculate the exact value of $k$ if not. Thus it leads to two additional cases:
-\begin{itemize}
-\item If no element among those read before $x$ belong to $P_{i+2s}$, then $x \in P_k$, $k \leq i + 2s$
-\item Otherwise, let $y := \text{top}(P_{i+2s})$. We compare $x$ and $y$
-    \begin{itemize}
-        \item If $x > y$, then $x \in P_k$, $k > i + 2s$ $\rightarrow x$ is ignored.
-        \item Otherwise $x \in P_k$, $k < i + 2s$. 
-    \end{itemize}
-\end{itemize}
-Notice that in all but two of the cases we have made $\mathcal{O}(1)$ operations while processing element $x$. Let us call what we do in rest of the cases
-an $expensive\ filter$. 
+This observation allows us to define the $filtering$ method for the \Ppass\ procedure.
+While processing $A$ sequentially, for each element we will find its pile index $k$ and perform the filtering on it depending on $k$. \\
+Suppose we are processing $a_t$. We can encounter one of these three cases: 
+\begin{enumerate}
+\item If $a_t = \operatorname{top}(P_i^t)$, then $k = i$.
+\item Otherwise, if $a_t < \operatorname{top}(P_i^{t-1})$, then by Observation~\ref{obs:filtering} $k < i$ and we ignore $a_t$.
+\item Otherwise $a_t > \operatorname{top}(P_i^{t-1})$, and again by Observation~\ref{obs:filtering}s $k > i$. \\
+Let $r := \operatorname{top}(P_{i + 2s}^{t-1})$, then:
+    \begin{enumerate}
+    \item if $r$ exists and $a_t > r$, then $k > i + 2s$ and we ignore $a_t$.
+    \item else if $r$ is undefined or $a_t \leq r$, we have $i < k \leq i + 2s$, and $k$ is the smallest index such that $a_t \leq \operatorname{top}(P_k^{t-1})$.
+    \end{enumerate}
+\end{enumerate}
 
-\begin{observation}
-$expensive\ filter$ takes $\mathcal{O}(\log s)$ time. Notice that $expensive\ filter$ purpose is to find $k$, where $i < k < i+2s$, such that $x \in P_k$.
-Then, if we maintain top elements of the $Piles$, using their monotonicity, we can find $k$ via binary searching over interval of length $\mathcal{O}(s)$.
-\end{observation}
+Notice, that if we have whole $P_i$ in the memory we can process the first and the second case in $\mathcal{O}(1)$ by maintaining a pointer to the most recently read element on $P_i$ -- $h = \operatorname{top}(P_i^{t-1})$.
+In the first case we compare $a_t$ to the element in $P_i$ that is after $h$. We can determine if we are in the second or third case by comparing $a_t$ to $h$.
+It is easy to see, that if we maintain $\operatorname{top}(P_k^{t-1})$ for all $i < k \leq i + 2s$ then we can distinguish cases 3(a) and 3(b) in $\mathcal{O}(1)$ and find the value of $k$ in 3(b) in $\mathcal{O}(\log s)$ time.
+We will call the search in 3(b) an $expensive\ filter$.
 
-
-
-
-\begin{algorithm}
+\begin{algorithm}[H]
     \caption{First pass in \Ppass, assume $P_i$ is given, and $|P_i| < s$}
     \begin{algorithmic}[1]
     \State set $h := 0$ \Comment{\textcolor{gray}{$h$ points to the most recently read element in $P_{i}$}}
@@ -283,7 +277,7 @@ Then, if we maintain top elements of the $Piles$, using their monotonicity, we c
 It is easy to see how to modify the procedure to compute the $P_j$ if $j$ is given.
 
 \begin{observation}
-Since $s > sqrt{n}$ there is at most $frac{n}{s} \leq s$ $Piles$ with more than $s$ elements which implies that $j > i + s$ 
+Since $s > \sqrt{n}$ there is at most $\frac{n}{s} \leq s$ piles with more than $s$ elements which implies that $j > i + s$ 
 \end{observation}
 
 
@@ -292,9 +286,14 @@ Since $s > sqrt{n}$ there is at most $frac{n}{s} \leq s$ $Piles$ with more than 
 
 \section{New results}
 
+The complexity analysis for the space parametrised \Psort\ in \cite{kiyomi2017space} for finding \LisLen\ yielded
+$\mathcal{O}(\frac{n^2}{s} \log n)$ time. By tighter estimation of calls to the expensive filter procedure defined before we are able to prove, that in fact this algorithm runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$.
+It was also presented in \cite{kiyomi2017space} how to compute the \Lis\ by using Divide \& Conquer algorithm with time complexity of $\mathcal{O}(\frac{n^2}{s} \log^2(s))$. We provide a simpler and more effective Divide and Conquer strategy that combined with improved bound for computing the \LisLen\ runs in $\mathcal{O}({\operatorname{max}(n \log n \log \log s, \frac{n^2}{s})})$ time.
+
+
 \subsection{Length computation}
-We provide a tighter time complexity analysis of the \Psort algorithm presented in \cite{kiyomi2017space}. 
-We show that the algorithm runs in $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time, improving the previous $\mathcal{O}(\frac{n^2}{s} \log n)$ bound.
+We provide a tighter time complexity analysis of the \Psort\ algorithm presented in \cite{kiyomi2017space}. 
+We show that the algorithm runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time, improving the previous $\mathcal{O}(\frac{n^2}{s} \log n)$ bound.
 
 \begin{definition}{name}
 Let $j_i$ be the index of the $Pile$ kept in memory after $i$-th \Ppass\ with $j_0=0$
@@ -310,7 +309,7 @@ Let $K$ be the total number of \Ppass -es
 
 Notice that time complexity of space parametrised \Psort\ for $\sqrt{n} \leq s \leq n$ can be then written as:
 \[
-T(n,s) = \mathcal{O}(nK + \log s * \sum_{i=1}^K W_i).
+T(n,s) = \mathcal{O}(nK + \log s \sum_{i=1}^K W_i).
 \]
 
 \begin{claim} \label{claim:linear-filters}
@@ -341,14 +340,14 @@ Thus, we get $\sum_{i=1}^K W_i \le 4n = \mathcal{O}(n)$.
 
 It is established in \cite{kiyomi2017space} that $K \text{ is } \mathcal{O}(\frac{n}{s})$, which gives us the total running time:
 \[
-T(n,s) = \mathcal{O}(\frac{n^2}{s}) + \mathcal{O}(n)\log s \text{ which is } \mathcal{O}(max(n\log n, \frac{n^2}{s})).
+T(n,s) = \mathcal{O}(\frac{n^2}{s}) + \mathcal{O}(n)\log s \text{ which is } \mathcal{O}(\operatorname{max}(n\log n, \frac{n^2}{s})).
 \]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{LIS computation}
-To \Lis, we present an alternative divide-and-conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\max(n \log n \log \log s, \frac{n^2}{s}))$ time. This improves on the earlier $\mathcal{O}(\frac{n^2}{s} \log^2(s))$ result.
+To \Lis, we present an alternative divide-and-conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\operatorname{max}(n \log n \log \log s, \frac{n^2}{s}))$ time. This improves on the earlier $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ result.
 
 \begin{definition}
 For $x \in A$ let $\textsc{Lis}_x$ be the $longest\ increasing\ subsequence$ of $A$ ending in $x$.
