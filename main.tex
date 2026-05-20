@@ -117,9 +117,9 @@
 
 \begin{abstract}
 Given an input array of comparable elements, we are to find either a longest increasing subsequence, or its length using parametrised space.
-It is well known that this problem can be solved in $\mathcal{O}(n \log(n))$ time without constrained memory. For parametrised memory - $s$, where
-$\sqrt{n} \leq s \leq n$ we present an improved analysis of $Patience\ Sorting$ algorithm presented in \cite{kiyomi2017space}. We show that the length computation runs in $\mathcal{O}(\max(n \log(n), \frac{n^2}{s}))$ time.
-We also show an improved $D \& C$ algorithm for obtaining the sequence running in $\mathcal{O}(\max(n \log(n) \log(\log (s)), \frac{n^2}{s}))$ time, while using $\mathcal{O}(s \log(n))$ bits.
+It is well known that this problem can be solved in $\mathcal{O}(n \log n)$ time without constrained memory. For parametrised memory - $s$, where
+$\sqrt{n} \leq s \leq n$ we present an improved analysis of $Patience\ Sorting$ algorithm presented in \cite{kiyomi2017space}. We show that the length computation runs in $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time.
+We also show an improved $D \& C$ algorithm for obtaining the sequence running in $\mathcal{O}(\max(n \log n \log \log s, \frac{n^2}{s}))$ time, while using $\mathcal{O}(s \log n)$ bits.
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -243,7 +243,7 @@ Notice that in all but two of the cases we have made $\mathcal{O}(1)$ operations
 an $expensive\ filter$. 
 
 \begin{observation}
-$expensive\ filter$ takes $\mathcal{O}(\log(s))$ time. Notice that $expensive\ filter$ purpose is to find $k$, where $i < k < i+2s$, such that $x \in P_k$.
+$expensive\ filter$ takes $\mathcal{O}(\log s)$ time. Notice that $expensive\ filter$ purpose is to find $k$, where $i < k < i+2s$, such that $x \in P_k$.
 Then, if we maintain top elements of the $Piles$, using their monotonicity, we can find $k$ via binary searching over interval of length $\mathcal{O}(s)$.
 \end{observation}
 
@@ -275,7 +275,7 @@ Then, if we maintain top elements of the $Piles$, using their monotonicity, we c
         \State set $p_k := x$ and $c_k := c_k + 1$
     \EndFor
     
-    \State set $j$ to be the biggest, such that $0 < c_j <= s$
+    \State set $j$ to be the biggest, such that $0 < c_j \leq s$
     
     \Return $j$
     \end{algorithmic}
@@ -295,7 +295,7 @@ Since $s > sqrt{n}$ there is at most $frac{n}{s} \leq s$ $Piles$ with more than 
 
 \subsection{Length computation}
 We provide a tighter time complexity analysis of the \Psort algorithm presented in \cite{kiyomi2017space}. 
-We show that the algorithm runs in $\mathcal{O}(\max(n \log (n), \frac{n^2}{s}))$ time, improving the previous $\mathcal{O}(\frac{n^2}{s} \log (n))$ bound.
+We show that the algorithm runs in $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time, improving the previous $\mathcal{O}(\frac{n^2}{s} \log n)$ bound.
 
 \begin{definition}{name}
 Let $j_i$ be the index of the $Pile$ kept in memory after $i$-th \Ppass\ with $j_0=0$
@@ -311,7 +311,7 @@ Let $K$ be the total number of \Ppass -es
 
 Notice that time complexity of space parametrised \Psort\ for $\sqrt{n} \leq s \leq n$ can be then written as:
 \[
-T(n,s) = \mathcal{O}(nK + \log(s) * \sum_{i=1}^K W_i).
+T(n,s) = \mathcal{O}(nK + \log s * \sum_{i=1}^K W_i).
 \]
 
 \begin{claim} \label{claim:linear-filters}
@@ -342,14 +342,14 @@ Thus, we get $\sum_{i=1}^K W_i \le 4n = \mathcal{O}(n)$.
 
 It is established in \cite{kiyomi2017space} that $K \text{ is } \mathcal{O}(\frac{n}{s})$, which gives us the total running time:
 \[
-T(n,s) = \mathcal{O}(\frac{n^2}{s}) + \mathcal{O}(n)\log(s) \text{ which is } \mathcal{O}(max(n\log(n), \frac{n^2}{s})).
+T(n,s) = \mathcal{O}(\frac{n^2}{s}) + \mathcal{O}(n)\log s \text{ which is } \mathcal{O}(max(n\log n, \frac{n^2}{s})).
 \]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{LIS computation}
-To \Lis, we present an alternative divide-and-conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\max(n \log (n) \log( \log (s)), \frac{n^2}{s}))$ time. This improves on the earlier $\mathcal{O}(\frac{n^2}{s} \log^2(s))$ result.
+To \Lis, we present an alternative divide-and-conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\max(n \log n \log \log s, \frac{n^2}{s}))$ time. This improves on the earlier $\mathcal{O}(\frac{n^2}{s} \log^2(s))$ result.
 
 \begin{definition}
 For $x \in A$ let $\textsc{Lis}_x$ be the $longest\ increasing\ subsequence$ of $A$ ending in $x$.
