@@ -5,6 +5,8 @@
 \usepackage[english]{babel}
 
 \usepackage{geometry}
+% \geometry{margin=3cm,bindingoffset=1cm,a4paper,onecolumn,twoside}
+
 \geometry{
     a4paper,
     left=25mm, 
@@ -136,19 +138,19 @@ The longest increasing subsequence (LIS for short) problem is a classic algorith
 The input is a sequence of $n$ numbers $A = (a_1, a_2, \dots, a_n)$, and we are to either find the length of LIS -- 
 the largest integer $k$ such that there exist indices $i_1 < i_2 < \dots < i_k$ such that $a_{i_1} < a_{i_2} < \dots < a_{i_k}$, or to return this subsequence.
 
-\subsubsection{Previous results}
+\subsection{Previous results}
 Efficient algorithms for finding the LIS are known, for example the Patience Sorting algorithm that runs in $\mathcal{O}(n \log n)$ for a sequence of length $n$ while using $\mathcal{O}(n)$ words in working space.
 Given a sequence of $n$ elements, \Psort\ assigns each element to a $pile$, where each $pile$ contains an information about the longest increasing subsequence of the input that ends in that element. 
 While the \Psort\ algorithm achieves the lower bound in terms of time complexity for finding a LIS, the question of how little memory one needs to efficiently solve the problem is still unanswered. 
 In \cite{kiyomi2017space} we can see a variation of \Psort\ that for given $s$ can find the length of a LIS in $\mathcal{O}(\frac{n^2}{s} \log n)$ and compute the actual subsequence in $\mathcal{O}(\frac{n^2}{s} \log^2 n)$, but only for $\sqrt{n} \leq s$.
 
-\subsubsection{Our contribution}
+\subsection{Our contribution}
 In this paper we improve the bounds achieved by \cite{kiyomi2017space}. For finding the length of a LIS we conduct a tighter time analysis showing that the proposed in \cite{kiyomi2017space} algorithm actually runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time,
 while maintaining the $\mathcal{O}(s)$ bound for the number of words in the working memory. 
 Next we observe that an alternate, simpler Divide \& Conquer algorithm can be derived, and is more efficient than one provided in \cite{kiyomi2017space}.
 Combined with the tighter analysis for LIS length computation it runs in $\mathcal{O}(\operatorname{max}(n \log n \log \log s, \frac{n^2}{s}))$.
 
-\subsubsection{Related work and applications}
+\subsection{Related work and applications}
 This problem is one of the most classic, basic algorithmic problems and has been the subject of research since the 1960's.
 If has many applications in various fields, for example, in version control it is being used in the well-known \texttt{diff} command.
 In bioinformatics  
@@ -367,7 +369,7 @@ T(n,s) = \mathcal{O}(\frac{n^2}{s}) + \mathcal{O}(n)\log s \text{ which is } \ma
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{LIS computation}
-To \Lis, we present an alternative divide-and-conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\operatorname{max}(n \log n \log \log s, \frac{n^2}{s}))$ time. This improves on the earlier $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ result.
+To \Lis, we present an alternative Divide \& Conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\operatorname{max}(n \log n \log \log s, \frac{n^2}{s}))$ time. This improves on the earlier $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ result.
 
 \begin{definition}
 For $x \in A$ let $\textsc{Lis}_x$ be the $longest\ increasing\ subsequence$ of $A$ ending in $x$.
@@ -385,27 +387,66 @@ For integer $x$ and sequence of numbers $A$, let $A_{\leq x}$ be the subsequence
 \end{definition}
 
 Let $A_{\ell}$ and $A_r$ be the left and right halves of $A$ respectively. Our goal is to efficiently find an element $m$ such that
-concatenation of $L_{\leq m}$ for $A_\ell$ and $L_{> m}$ for $A_r$ is a \Lis for original input $A$.
+concatenation of $L_{\leq m}$ for $A_\ell$ and $L_{> m}$ for $A_r$ is a \Lis\ for original input $A$. 
+Having such element would allow us to recursively solve \Lis\ for $A_\ell$ and $A_r$ independently. We will show that such element can be found during a single \LisLen\ computation without changing its time and memory complexity.
 
 \begin{definition}
-For $x \in A$, let pred$(x) \in A_\ell$ be such that there is a valid $\textsc{Lis}_x$ in $A$
-such that the last element of it belonging to $A_\ell$ is pred$(x)$
+For $x \in A$, let pred$(x) \in A_\ell$ be such that there is a $\textsc{Lis}_x$ in $A$
+such that the last element of it belonging to $A_\ell$ is pred$(x)$, or null if the length of $\textsc{Lis}_x$ is 1 and $x \notin A_\ell$.
 \end{definition}
 
-\begin{claim} Let $x \in P_i$, then \\
-pred$(x) = \begin{cases}
-x & \text{if } x \in A_\ell \\
-null & \text{if } x \in A_r \land i = 1 \\
-\text{pred}(y) & \text{where } y = \text{top}(P_{i-1}) \text{ when } x \text{ was being read }
+\begin{claim} Let $a_t \in P_i$, then \\
+pred$(a_t) = \begin{cases}
+a_t & \text{if } a_t \in A_\ell \\
+\text{null} & \text{if } a_t \in A_r \land i = 1 \\
+\text{pred}(y) & \text{where } y = \operatorname{top}(P_{i-1}^{t-1})
 \end{cases}$
 \end{claim}
 
 \begin{proof}
-If $x \in A_\ell$ its trivial, so assume $x \in A_r$. Now, if $x \in P_1$, then the $\textsc{Lis}_x$ is of
-length $1$, thus it is $(x)$, so the pred$(x)$ does not exist. Now, assume that $x \in A_r \land x \in P_i \land i > 1$. Then  
-$\textsc{Lis}_x$ is of length $i$. Since at the moment of reading $x$, $y = \text{top}(P_{i-1})$ is smaller than $x$, and $x$ is later in $A$ than $y$, if we append $x$ to $\textsc{Lis}_y$ it is still a valid $increasing\ subsequence$.
-Notice that since length of $\textsc{Lis}_y$ is $i-1$, by appending $x$ to it we obtained $\textsc{Lis}_x$. Since $x \in A_r$ the last element belonging to $A_\ell$ in $\textsc{Lis}_x$ is the same one that in $\textsc{Lis}_y$ making pred$(x)$ = pred$(y)$.  
+If $a_t \in A_\ell$ its trivial, so assume $a_t \in A_r$. Now, if $a_t \in P_1$, then the $\textsc{Lis}_{a_t}$ is of
+length $1$, thus by definition $\operatorname{pred}(a_t) = \text{null}$. Now, assume that $a_t \in A_r \land a_t \in P_i \land i > 1$. Then  
+$\textsc{Lis}_{a_t}$ is of length $i$. Since $y = \text{top}(P_{i-1}^{t-1})$ is smaller than $a_t$ (by Observation~\ref{obs:filtering}), and $a_t$ is later in $A$ than $y$, if we append $a_t$ to $\textsc{Lis}_y$ it is still a valid $increasing\ subsequence$.
+Notice that since length of $\textsc{Lis}_y$ is $i-1$, by appending $a_t$ to it we obtained $\textsc{Lis}_{a_t}$. Since $a_t \in A_r$ the last element belonging to $A_\ell$ in $\textsc{Lis}_{a_t}$ is the same one that in $\textsc{Lis}_y$ making $\operatorname{pred}(a_t) = \operatorname{pred}(y)$.  
 \end{proof}
+
+It can be easily seen how to modify the \Ppass\ procedure and store the pred of an element using only $\mathcal{O}(n)$ time per \Ppass\.
+We can also see that to compute pred for any element that is not filtered out during a \Ppass\ we can use pred values 
+
+and memoising the additional value only for the $\mathcal{O}(s)$ elements that we already store in memory, thus keeping both time and memory complexity with respect to big-$\mathcal{O}$ notation.
+We deduce that the previously mentioned element $m$ can be $\operatorname{pred}(x)$ for any $x$ in the last pile and since computing pred values does not change the time and memory complexity of the \Ppass\ 
+
+\begin{observation}
+Since we can find the element $m$ during a single \Ppass\ which runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time 
+and then solve on two halves of the input independently, the time complexity for solving the \Lis\ can be written as:
+\[
+T(n, s) = \begin{cases}
+2T(\frac{n}{2}, s) + c\operatorname{max}(n \log n, \frac{n^2}{s}) \text{if } n > s \\
+c'n \log n \text{if } n \leq s
+\end{cases}
+\]
+For some constants $c, c'$, which is $\mathcal{O}(\operatorname{max}(n \log n \log \log s, \frac{n^2}{s}))$.
+\end{observation}
+
+Below we present the pseudocode for computing the \Lis. We assume that \LisLen\ 
+
+
+\begin{algorithm}
+    \caption{\Psort}
+    \begin{algorithmic}[1]
+        \State initialize $P_{0}$ with the single element $-\infty$
+        \State set $k := 0$
+        \For{$x \in A$}
+            \If{$x > \text{top} (P_{k})$}
+                \State set $k := k + 1$
+                \State create an empty $Pile$, $P_{k}$, and push $x$ to $P_{k}$
+            \Else
+                \State set $h$ to be the smallest index with $x \leq \text{top}(P_h)$, and push $x$ to $P_h$
+            \EndIf
+        \EndFor
+        \State \Return $k$
+  \end{algorithmic}
+\end{algorithm}
 
 
 
