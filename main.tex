@@ -121,7 +121,7 @@
 \begin{abstract}
 Given an input array of comparable elements, we are to find either a longest increasing subsequence, or its length using parametrised space.
 It is well known that this problem can be solved in $\mathcal{O}(n \log n)$ time without constrained memory. For parametrised memory -- $s$, where
-$\sqrt{n} \leq s \leq n$ we present an improved analysis of $Patience\ Sorting$ algorithm presented in \cite{kiyomi2017space}. We show that the length computation runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time.
+$\sqrt{n} \leq s \leq n$ we present an improved analysis of space parametrised $Patience\ Sorting$ algorithm presented in \cite{kiyomi2017space}. We show that the length computation runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time.
 We also show an improved Divide \& Conquer algorithm for obtaining the sequence running in $\mathcal{O}(\operatorname{max}(n \log n \log \log s, \frac{n^2}{s}))$ time while using $\mathcal{O}(s \log n)$ bits.
 \end{abstract}
 
@@ -139,8 +139,8 @@ The input is a sequence of $n$ numbers $A = (a_1, a_2, \dots, a_n)$, and we are 
 the largest integer $k$ such that there exist indices $i_1 < i_2 < \dots < i_k$ such that $a_{i_1} < a_{i_2} < \dots < a_{i_k}$, or to return this subsequence.
 
 \subsection{Previous results}
-Efficient algorithms for finding the LIS are known, for example the Patience Sorting algorithm that runs in $\mathcal{O}(n \log n)$ for a sequence of length $n$ while using $\mathcal{O}(n)$ words in working space.
-Given a sequence of $n$ elements, \Psort\ assigns each element to a $pile$, where each $pile$ contains an information about the longest increasing subsequence of the input that ends in that element. 
+Efficient algorithms for finding the LIS are known, for example the Patience Sorting algorithm devised by Mallows \cite{mallows} that runs in $\mathcal{O}(n \log n)$ for a sequence of length $n$ while using $\mathcal{O}(n)$ words in working space.
+Given a sequence of $n$ elements, \Psort\ assigns each element to a $pile$, where each pile contains an information about the longest increasing subsequence of the input that ends in that element. 
 While the \Psort\ algorithm achieves the lower bound in terms of time complexity for finding a LIS, the question of how little memory one needs to efficiently solve the problem is still unanswered. 
 In \cite{kiyomi2017space} we can see a variation of \Psort\ that for given $s$ can find the length of a LIS in $\mathcal{O}(\frac{n^2}{s} \log n)$ and compute the actual subsequence in $\mathcal{O}(\frac{n^2}{s} \log^2 n)$, but only for $\sqrt{n} \leq s$.
 
@@ -211,7 +211,7 @@ Below is depicted the \Psort\ algorithm for solving \LisLen.
                 \State set $k := k + 1$
                 \State create an empty $Pile$, $P_{k}$, and push $x$ to $P_{k}$
             \Else
-                \State set $h$ to be the smallest index with $x \leq \text{top}(P_h)$, and push $x$ to $P_h$
+                \State set $h$ to be the smallest index with $x \leq \operatorname{top}(P_h)$, and push $x$ to $P_h$
             \EndIf
         \EndFor
         \State \Return $k$
@@ -219,7 +219,7 @@ Below is depicted the \Psort\ algorithm for solving \LisLen.
 \end{algorithm}
 
 
-\begin{observation}\label{obs:pile}
+\begin{observation}\label{obs:pile}(\cite{burnstein})
 This procedure correctly computes piles, in other words: \\
 Element $x \in P_i$ iff. a $longest\ increasing\ subsequence$ of $A$ ending at $x$ is of length $i$
 \end{observation}
@@ -238,7 +238,7 @@ We will use the memoised pile to compute $j$ such that $i + s \leq j \leq i + 2s
 and whole $P_j$ (or just $\operatorname{top}(P_j)$ if $j$ is the \LisLen) guaranteeing that we do not exceed the memory limit.
 
 
-\begin{observation}\label{obs:filtering}
+\begin{observation}\label{obs:filtering} (\cite{kiyomi2017space}, Observation 4.1)
 Suppose we are reading the $t$-th element of $A$ -- $a_t$, and $a_t \in P_j$. Let $i$ be some fixed integer. \\
 If $j \neq i$, then 
 \begin{itemize}
@@ -263,7 +263,7 @@ Let $r := \operatorname{top}(P_{i + 2s}^{t-1})$, then:
 Notice, that if we have whole $P_i$ in the memory we can process the first and the second case in $\mathcal{O}(1)$ by maintaining a pointer to the most recently read element on $P_i$ -- $h = \operatorname{top}(P_i^{t-1})$.
 In the first case we compare $a_t$ to the element in $P_i$ that is after $h$. We can determine if we are in the second or third case by comparing $a_t$ to $h$.
 It is easy to see, that if we maintain $\operatorname{top}(P_k^{t-1})$ for all $i < k \leq i + 2s$ then we can distinguish cases 3(a) and 3(b) in $\mathcal{O}(1)$ and find the value of $k$ in 3(b) in $\mathcal{O}(\log s)$ time.
-We will call the search in 3(b) an $expensive\ filter$.
+We will call the search in 3(b) an $expensive\ filter$. Below we present the \Ppass\ implementation (\cite{kiyomi2017space} Algorithm 3).
 
 \begin{algorithm}[H]
     \caption{First pass in \Ppass, assume $P_i$ is given, and $|P_i| < s$}
@@ -337,7 +337,7 @@ T(n,s) = \mathcal{O}(nK + \log s \sum_{i=1}^K W_i).
 \begin{claim} \label{claim:linear-filters}
 The total number of expensive filter operations is linear, i.e.,
 \[
-\sum_{i=1}^K W_i = \mathcal{O}(n).
+\sum_{i=1}^K W_i \in \mathcal{O}(n).
 \]
 \end{claim}
 
@@ -357,13 +357,14 @@ By \cite{kiyomi2017space} we have $j_i \ge j_{i-1}+s$. This implies that the lef
 \[
 \sum_{i=1}^K \sum_{k \in I_i} |P_k| \le 2\sum_{k=1}^n |P_k| = 2n.
 \]
-Thus, we get $\sum_{i=1}^K W_i \le 4n = \mathcal{O}(n)$.
+Thus, we get $\sum_{i=1}^K W_i \le 4n \in \mathcal{O}(n)$.
 \end{proof}
 
-It is established in \cite{kiyomi2017space} that $K \text{ is } \mathcal{O}(\frac{n}{s})$, which gives us the total running time:
+Because after each \Ppass\ we advance at least by $s$ piles and the largest possible pile index is $n$, $K \in \mathcal{O}(\frac{n}{s})$, which gives us the total running time:
 \[
-T(n,s) = \mathcal{O}(\frac{n^2}{s}) + \mathcal{O}(n)\log s \text{ which is } \mathcal{O}(\operatorname{max}(n\log n, \frac{n^2}{s})).
+T(n,s) \leq cn \frac{n}{s} + c'n\log s
 \]
+For some constants $c, c'$. It is easy to see that $T(n, s) \in \mathcal{O}(\operatorname{max}(n\log n, \frac{n^2}{s}))$ as desired.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
