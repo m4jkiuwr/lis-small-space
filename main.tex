@@ -131,8 +131,28 @@ We also show an improved Divide \& Conquer algorithm for obtaining the sequence 
 \newpage
 
 \section{Introduction}
-The longest increasing subsequence (LIS for short) problem is a classic algorithmic problem with applications in areas such as sequence analysis, pattern discovery, and optimization. Given a sequence of numbers, the task is to find a longest subsequence whose elements appear in strictly increasing order while preserving their original order, or to compute length of such sequence.
-Although the LIS problem has been studied extensively in many variants, the trade-off between time and space remains relevant when the input is large or memory is limited. In this paper, we focus on computing both the length of an LIS and an actual LIS using small auxiliary space. First contribution regards a tighter analysis of the Patience Sorting based approach introduced by Kiyomi et al.~\cite{kiyomi2017space}, showing that the length can be computed in $O\!\left(\max(n \log n, n^2/s)\right)$ time. We also provide an alternative divide-and-conquer method for recovering the sequence, which combined with the improved length analysis shows an algorithm working in $O\!\left(\max(n \log n \log \log s, n^2/s)\right)$ time.
+
+The longest increasing subsequence (LIS for short) problem is a classic algorithmic problem. 
+The input is a sequence of $n$ numbers $A = (a_1, a_2, \dots, a_n)$, and we are to either find the length of LIS -- 
+the largest integer $k$ such that there exist indices $i_1 < i_2 < \dots < i_k$ such that $a_{i_1} < a_{i_2} < \dots < a_{i_k}$, or to return this subsequence.
+
+\subsubsection{Previous results}
+Efficient algorithms for finding the LIS are known, for example the Patience Sorting algorithm that runs in $\mathcal{O}(n \log n)$ for a sequence of length $n$ while using $\mathcal{O}(n)$ words in working space.
+Given a sequence of $n$ elements, \Psort\ assigns each element to a $pile$, where each $pile$ contains an information about the longest increasing subsequence of the input that ends in that element. 
+While the \Psort\ algorithm achieves the lower bound in terms of time complexity for finding a LIS, the question of how little memory one needs to efficiently solve the problem is still unanswered. 
+In \cite{kiyomi2017space} we can see a variation of \Psort\ that for given $s$ can find the length of a LIS in $\mathcal{O}(\frac{n^2}{s} \log n)$ and compute the actual subsequence in $\mathcal{O}(\frac{n^2}{s} \log^2 n)$, but only for $\sqrt{n} \leq s$.
+
+\subsubsection{Our contribution}
+In this paper we improve the bounds achieved by \cite{kiyomi2017space}. For finding the length of a LIS we conduct a tighter time analysis showing that the proposed in \cite{kiyomi2017space} algorithm actually runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time,
+while maintaining the $\mathcal{O}(s)$ bound for the number of words in the working memory. 
+Next we observe that an alternate, simpler Divide \& Conquer algorithm can be derived, and is more efficient than one provided in \cite{kiyomi2017space}.
+Combined with the tighter analysis for LIS length computation it runs in $\mathcal{O}(\operatorname{max}(n \log n \log \log s, \frac{n^2}{s}))$.
+
+\subsubsection{Related work and applications}
+This problem is one of the most classic, basic algorithmic problems and has been the subject of research since the 1960's.
+If has many applications in various fields, for example, in version control it is being used in the well-known \texttt{diff} command.
+In bioinformatics  
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -252,10 +272,10 @@ We will call the search in 3(b) an $expensive\ filter$.
     \State set $c_{i+1}, c_{i+2}, \ldots, c_{i+2s}$ to $0$ \Comment{\textcolor{gray}{$c_k$ is the current size of $P_k$}}
     \For{$ x \in A$} 
 
-        \If{$x$ is $P_i(h+1)$} \Comment{\textcolor{gray}{$x$ is the next element in $P_i$}}
+        \If{$x$ is $P_i[h+1]$} \Comment{\textcolor{gray}{$x$ is the next element in $P_i$}}
             \State set $h := h + 1$ 
             \State continue
-        \ElsIf {$x < P_i(h)$ or $x > p_{i+2s}$} \Comment{\textcolor{gray}{$x$ belongs to the $P_k$ where $k < i \vee k > i+2s$}}
+        \ElsIf {$x < P_i[h]$ or $x > p_{i+2s}$} \Comment{\textcolor{gray}{$x$ belongs to the $P_k$ where $k < i \vee k > i+2s$}}
             \State continue
         \EndIf
 
@@ -287,7 +307,7 @@ Since $s > \sqrt{n}$ there is at most $\frac{n}{s} \leq s$ piles with more than 
 \section{New results}
 
 The complexity analysis for the space parametrised \Psort\ in \cite{kiyomi2017space} for finding \LisLen\ yielded
-$\mathcal{O}(\frac{n^2}{s} \log n)$ time. By tighter estimation of calls to the expensive filter procedure defined before we are able to prove, that in fact this algorithm runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$.
+$\mathcal{O}(\frac{n^2}{s} \log n)$ time. By tighter estimation of the number of calls to the expensive filter procedure defined before we are able to prove, that in fact this algorithm runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$.
 It was also presented in \cite{kiyomi2017space} how to compute the \Lis\ by using Divide \& Conquer algorithm with time complexity of $\mathcal{O}(\frac{n^2}{s} \log^2(s))$. We provide a simpler and more effective Divide and Conquer strategy that combined with improved bound for computing the \LisLen\ runs in $\mathcal{O}({\operatorname{max}(n \log n \log \log s, \frac{n^2}{s})})$ time.
 
 
@@ -295,11 +315,11 @@ It was also presented in \cite{kiyomi2017space} how to compute the \Lis\ by usin
 We provide a tighter time complexity analysis of the \Psort\ algorithm presented in \cite{kiyomi2017space}. 
 We show that the algorithm runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time, improving the previous $\mathcal{O}(\frac{n^2}{s} \log n)$ bound.
 
-\begin{definition}{name}
-Let $j_i$ be the index of the $Pile$ kept in memory after $i$-th \Ppass\ with $j_0=0$
+\begin{definition}
+    Let $j_i$ be the index of the pile kept in memory after $i$-th \Ppass\ with $j_0=0$
 \end{definition}
 
-\begin{definition}{name}
+\begin{definition}
 Let $W_i$ be the number of $expensive\ filter$ operations during the $i$-th \Ppass\
 \end{definition}
 
@@ -313,7 +333,7 @@ T(n,s) = \mathcal{O}(nK + \log s \sum_{i=1}^K W_i).
 \]
 
 \begin{claim} \label{claim:linear-filters}
-The total number of $expensive\ filter$ operations is linear, i.e.,
+The total number of expensive filter operations is linear, i.e.,
 \[
 \sum_{i=1}^K W_i = \mathcal{O}(n).
 \]
@@ -353,19 +373,22 @@ To \Lis, we present an alternative divide-and-conquer algorithm, which combined 
 For $x \in A$ let $\textsc{Lis}_x$ be the $longest\ increasing\ subsequence$ of $A$ ending in $x$.
 \end{definition}
 
+
+
+
 \begin{definition}
-For integer $x$, let:
+For integer $x$ and sequence of numbers $A$, let $A_{\leq x}$ be the subsequence of $A$ consisted of elements that are equal of smaller than $x$. Analogously we define $A_{>x}$.
 \begin{itemize}
-\item $L_{\leq x}$ be a valid answer to \Lis\ for $\{y \in A \mid y \leq x \}$
-\item $L_{>x}$ be a valid answer to \Lis\ for $\{y \in A \mid y > x \}$
+\item $L_{\leq x}$ is a \Lis\ for $A_{\leq x}$.
+\item $L_{>x}$ is a \Lis\ for $A_{>x}$.
 \end{itemize}
 \end{definition}
 
 Let $A_{\ell}$ and $A_r$ be the left and right halves of $A$ respectively. Our goal is to efficiently find an element $m$ such that
-concatenation of $L_{\leq m}$ for $A_\ell$ and $L_{> m}$ for $A_r$ is an answer to \Lis for original input $A$.
+concatenation of $L_{\leq m}$ for $A_\ell$ and $L_{> m}$ for $A_r$ is a \Lis for original input $A$.
 
 \begin{definition}
-For $x \in A$ let pred$(x) \in A_\ell$ be such that there is a valid $\textsc{Lis}_x$ in $A$
+For $x \in A$, let pred$(x) \in A_\ell$ be such that there is a valid $\textsc{Lis}_x$ in $A$
 such that the last element of it belonging to $A_\ell$ is pred$(x)$
 \end{definition}
 
