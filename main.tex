@@ -316,15 +316,15 @@ We provide a tighter time complexity analysis of the \Psort\ algorithm presented
 We show that the algorithm runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time, improving the previous $\mathcal{O}(\frac{n^2}{s} \log n)$ bound.
 
 \begin{definition}
-    Let $j_i$ be the index of the pile kept in memory after $i$-th \Ppass\ with $j_0=0$
+    Let $j_i$ be the index of the pile kept in memory after $i$-th \Ppass\ with $j_0=0$.
 \end{definition}
 
 \begin{definition}
-Let $W_i$ be the number of $expensive\ filter$ operations during the $i$-th \Ppass\
+Let $W_i$ be the number of $expensive\ filter$ operations during the $i$-th \Ppass.
 \end{definition}
 
 \begin{definition}{name}
-Let $K$ be the total number of \Ppass -es
+Let $K$ be the total number of \Ppass -es.
 \end{definition}
 
 Notice that time complexity of space parametrised \Psort\ for $\sqrt{n} \leq s \leq n$ can be then written as:
