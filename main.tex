@@ -305,7 +305,7 @@ We will call the search in 3(b) an $expensive\ filter$. Below we present the \Pp
 \end{algorithm}
 
 After this pass, if value of $r < i + 2s$ we can conclude that $r$ is \LisLen\ since no element belongs to a pile with larger index.
-Then we can set $j \coloneq r$ and return $j$ as \LisLen\ and $p_j = \operatorname{top}(P_j)$.  
+Then we can set $j := r$ and return $j$ as \LisLen\ and $p_j = \operatorname{top}(P_j)$.  
 It is easy to see how to modify the procedure to compute the whole $P_j$ if $j$ is given, we can maintain additional stack and push elements they are in the $j$-th pile.
 
 
