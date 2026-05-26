@@ -150,11 +150,11 @@ while maintaining the $\mathcal{O}(s)$ bound for the number of words in the work
 Next we observe that an alternate, simpler Divide \& Conquer algorithm can be derived, and is more efficient than one provided in \cite{kiyomi2017space}.
 Combined with the tighter analysis for LIS length computation it runs in $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$.
 
-\subsection{Related work and applications}
-This problem is one of the most classic, basic algorithmic problems and has been the subject of research since the 1960's.
-If has many applications in various fields, for example, in version control it is being used in the well-known \texttt{diff} command.
-In bioinformatics  
-
+\subsection{Related work}
+The LIS problem, besides the classic setting, has many heavily-researched variations.
+For example we could ask for the longest increasing subsequence only one some part of the input by making range queries (\cite{range-lis}).
+We can also ask about maintaining the LIS in dynamic setting (\cite{dynamic-lis}, \cite{dynamic-lis-lb}). Another interesting question is 
+approximation of LIS in any of this setting (\cite{approx-lis}, \cite{approx-lcs}). 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
