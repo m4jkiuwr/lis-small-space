@@ -190,7 +190,7 @@ Combined with the tighter analysis for the LIS length computation, it runs in $\
 \subsection{Related work}
 The LIS problem, in addition to its classic setting, has many heavily-researched variations.
 For example, we could ask for the longest increasing subsequence only on some part of the input by making range queries \cite{range-lis}.
-We can also ask about maintaining the LIS in a dynamic setting \cite{dynamic-lis, dynamic-lis-lb}. Another interesting question is 
+We can also ask to maintain the LIS in a dynamic setting \cite{dynamic-lis, dynamic-lis-lb}. Another interesting question is 
 the approximation of the LIS in any of these settings \cite{approx-lis, approx-lcs}. 
 
 \subsection{Applications}
@@ -225,28 +225,31 @@ We use the RAM model, where the input sequence is read-only, and the working mem
 
 \subsection{Patience Sorting}
 
-Our algorithm is based on the classic \Psort. Let us define basic notions used throughout the algorithm. The idea of the algorithm is maintaining $Piles$\ -- stacks of integers such that for all $x \in A$, $x$ belongs to the $i$-th pile if and only if the $longest\ increasing\ subsequence$ of $A$ ending in $x$ has length $i$.
-Since \Psort\, both classic, and space-parametrised is based on sequential passes through the input sequence we define
+Our algorithm is based on the classic \Psort. Let us define basic notions used throughout the algorithm. The idea of the algorithm is to maintain \textit{piles} -- stacks of integers such that for all $x \in A$, $x$ belongs to the $i$-th pile if and only if the \textit{longest increasing subsequence} of $A$ ending in $x$ has length $i$.
+Since both classic and space-parametrised variants of the \Psort\ algorithm are based on sequential passes through the input array, we define
 pile operations with respect to the time when they are being used.
 
 \begin{definition}
-For integers $i, t$ we refer to the state $i$-th pile after reading first $t$ elements of the input sequence as $P_{i}^{t}$, and $P_i$ will represent the $i$-th pile after reading the whole input sequence. \\
-Let $P$ be some state of the pile (for example $P_3^4$ or $P_2$).
-\begin{itemize}
-\item $|P|$ is the number of elements that belongs to $P$
-\item $\operatorname{top}(P)$ refers to the element on the top of the pile (the one that was added most recently to it), or null if $P$ is empty.
-\item For integer $j$, $P[j]$ is the $j$-th element of $P$, where $\operatorname{top}(P) = P[|P|]$, and $P[1]$ is the element on the bottom of $P$. 
-\end{itemize}
+For integers $i, t$, we refer to the state of the $i$-th pile after reading the first $t$ elements of the input sequence as $P_{i}^{t}$, and $P_i$ will represent the $i$-th pile after reading the whole input sequence.
 \end{definition}
+Now we define some useful operations that can be conducted on piles.
+Let $P$ be some state of the pile (for example $P_3^4$ or $P_2$), then:
+
+\begin{itemize}
+\item $|P|$ is the number of elements that belong to $P$
+\item $\operatorname{top}(P)$ refers to the element on the top of the pile (the one that was added most recently to it), or null if $P$ is empty.
+\item For an integer $j$, $P[j]$ is the $j$-th element of $P$, where $\operatorname{top}(P) = P[|P|]$, and $P[1]$ is the element on the bottom of $P$. 
+\end{itemize}
 
 It follows from the pile definition that if we are solving the \LisLen\ problem, then our goal is to compute the largest integer $k$ such that $P_k$ is non-empty.
-Classic \Psort\ algorithm achieves that by constructing all piles during a single passing through the input sequence. When reading the $t$-th element of $A$ -- $a_t$, we find
+Classic \Psort\ algorithm achieves that by constructing all piles during a single pass through the input sequence. When reading the $t$-th element of $A$ -- $a_t$, we find
 the smallest $i$ such that $\operatorname{top}(P_i^{t-1}) \geq a_t$ and we push $a_t$ to the top of the $i$-th pile, or we create a new, rightmost pile with a single element $a_t$.
 Notice that by definition each element belongs to exactly one pile, thus for every $t$, if $a_t$ is in $i$-th pile then $P_j^{t-1} = P_j^{t}$ if $j \neq i$ and $P_i^t$ is $P_i^{t-1}$ with $a_t$ pushed on top.
-Because the difference in states of piles changes in a tractable way, we omit the upper indexes in the implementation of \Psort\ algorithm below.
+Because the difference in states of piles changes in a tractable way, we omit the upper indices in the implementation of \Psort\ algorithm below.
 
 \begin{algorithm}
     \caption{\Psort}
+    \label{alg:psort}
     \begin{algorithmic}[1]
         \State initialize $P_{0}$ with the single element $-\infty$
         \State set $k := 0$ \Comment{\textcolor{gray}{$k$ will be the index of the rightmost non-empty pile}}
@@ -264,25 +267,25 @@ Because the difference in states of piles changes in a tractable way, we omit th
 
 
 \begin{observation}\label{obs:pile}(\cite{burnstein})
-This procedure correctly computes piles, in other words: \\
-Element $a_t \in P_i$ if and only if a $longest\ increasing\ subsequence$ of $A$ ending in $a_t$ is of length $i$
+Algorithm~\ref{alg:psort} correctly computes piles, in other words: \\
+Element $a_t \in P_i$ if and only if a \textit{longest increasing subsequence} of $A$ ending in $a_t$ is of length $i$
 \end{observation}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{space-parametrised Patience Sorting}
+\subsection{Space-parametrised Patience Sorting}
 
-Now we will define the space-parametrised variant of \Psort\ that originates from \cite{kiyomi2017space}.
+Now we define the space-parametrised variant of \Psort\ that originates from \cite{kiyomi2017space}.
 
 Assume that our working memory is limited to $\mathcal{O}(s)$ words, and $\sqrt{n} \leq s \leq n$.
 Similarly to the classic \Psort\ we will process the input array sequentially while maintaining piles. However, since our memory is limited and we cannot afford
-to keep all piles in the memory, we will pass through the input multiple times. Each time we will memoise only one, chosen pile and some top elements of other piles. The idea is clearly presented in \cite{kiyomi2017space} (Lemma 4.2, Lemma 4.3).
+to keep all piles in the memory, we will pass through the input multiple times. Each time we will store only one, chosen pile and top elements of some other piles. The idea is clearly presented in \cite{kiyomi2017space} (Lemma 4.2, Lemma 4.3).
 
-More precisely, now we will define a procedure \Ppass\ that given the $i$-th pile $P_i$ performs two passes through the input array.
-During the first pass it computes an index $j$ such that $i + s \leq j \leq i + 2s \land |P_j| \leq s$ or $j$ is \LisLen. 
-During the second pass, now with given $P_i$ and $j$ it will compute whole $P_j$, or only the $\operatorname{top}(P_j)$ if $j$ is \LisLen.
+More precisely, now we define a procedure \Ppass\ that, given the $i$-th pile $P_i$, performs two passes through the input array.
+During the first pass it computes an index $j$ such that $i + s \leq j \leq i + 2s \land |P_j| \leq s$ or $j$ is the length of a \Lis. 
+During the second pass, now with given $P_i$ and $j$ it will compute whole $P_j$, or only the $\operatorname{top}(P_j)$ if $j$ is the length of a \Lis.
 
 \begin{observation}\label{obs:filtering} (\cite{kiyomi2017space}, Observation 4.1)
 Suppose we are reading the $t$-th element of $A$ -- $a_t$, and $a_t \in P_j$. Let $i$ be some fixed integer. \\
@@ -295,7 +298,7 @@ If $j \neq i$, then
 
 Recall that in \Psort\ procedure, for an element $a_t$, to determine to which pile it belongs it suffices to know only values of the top elements of piles in moment $t-1$. 
 Moreover, by Observation~\ref{obs:filtering} if we want to check if this index -- $k$ belongs to some interval, in our case we want to check if $i \leq k \leq i + 2s$ it suffices to know only top elements 
-of the piles whose indexes are also in this interval. Below we define the $filtering$ method for the \Ppass\ procedure. \\
+of the piles whose indices are also in this interval. Below we define the \textit{filtering} method for the \Ppass\ procedure. \\
 
 Suppose we are processing $a_t$. We can encounter one of these three cases: 
 \begin{enumerate}
@@ -310,12 +313,12 @@ Let $r := \operatorname{top}(P_{i + 2s}^{t-1})$, then:
 \end{enumerate}
 Observe that if the first case is false, then $\operatorname{top}(P_i^{t-1}) = \operatorname{top}(P_i^{t})$ thus exactly one of these cases holds. \\
 
-Notice, that if we have whole $P_i$ in the memory we can process first two cases in time $\mathcal{O}(1)$ by maintaining a pointer to the most recently read element on $P_i$ -- $h = \operatorname{top}(P_i^{t-1})$.
+Notice, that if we have whole $P_i$ in the memory we can process the first two cases in constant time by maintaining a pointer to the most recently read element on $P_i$ -- $h = \operatorname{top}(P_i^{t-1})$.
 
 In the first case we compare $a_t$ to the element in $P_i$ that is after $h$. We can determine if we are in the second or third case by comparing $a_t$ and $h$.
 
 It is easy to see, that if we maintain $\operatorname{top}(P_k^{t-1})$ for all $i < k \leq i + 2s$ then we can distinguish cases 3(a) and 3(b) in $\mathcal{O}(1)$ and find the value of $k$ in 3(b) in $\mathcal{O}(\log s)$ time.
-We will call the search in 3(b) an $expensive\ filter$. Below we present the \Ppass\ implementation (\cite{kiyomi2017space} Algorithm 3).
+We will call the search in 3(b) an \textit{expensive filter}. Below we present the \Ppass\ implementation (\cite{kiyomi2017space} Algorithm 3).
 
 \begin{algorithm}[H]
     \caption{First pass in \Ppass, assume $P_i$ is given, and $|P_i| < s$}
@@ -348,7 +351,7 @@ We will call the search in 3(b) an $expensive\ filter$. Below we present the \Pp
     \end{algorithmic}
 \end{algorithm}
 
-After this pass, if value of $r < i + 2s$ we can conclude that $r$ is \LisLen\ since no element belongs to a pile with larger index.
+After this pass, if value of $r < i + 2s$ we can conclude that $r$ is the length of a \Lis since no element belongs to a pile with larger index.
 Then we can set $j := r$ and return $j$ as \LisLen\ and $p_j = \operatorname{top}(P_j)$.  
 It is easy to see how to modify the procedure to compute the whole $P_j$ if $j$ is given, we can maintain additional stack and push elements they are in the $j$-th pile.
 
@@ -358,7 +361,7 @@ Since $s > \sqrt{n}$ there is at most $\frac{n}{s} \leq s$ piles with more than 
 \end{observation}
 
 \begin{observation} \label{obs:ppass-time}
-For single \Ppass\, the time complexity can be written as $\mathcal{O}(n + W \log s )$, where $W$ is the number of calls to the expensive filter during the procedure.
+For single \Ppass, the time complexity can be written as $\mathcal{O}(n + W \log s )$, where $W$ is the number of calls to the expensive filter during the procedure.
 \end{observation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -380,7 +383,7 @@ We show that the algorithm runs in $\mathcal{O}(\operatorname{max}(n \log n, \fr
 \end{definition}
 
 \begin{definition}
-Let $W_i$ be the number of $expensive\ filter$ operations during the $i$-th \Ppass.
+Let $W_i$ be the number of \textit{expensive filter} operations during the $i$-th \Ppass.
 \end{definition}
 
 \begin{definition}
@@ -402,7 +405,7 @@ The total number of expensive filter operations is linear, i.e.,
 \begin{proof}
 For each pass $i \in \{1, \dots, K\}$, let us define the active interval $I_i = (j_{i-1}, j_{i-1}+2s]$.
 
-Fix a pass $i$. During the first phase of this pass, the $expensive\ filter$ is invoked only for elements whose pile index belongs to $I_i$. Once the new boundary $j_i$ is determined, the second phase invokes the $expensive\ filter$ only if the pile index is in $(j_{i-1}, j_i]$. 
+Fix a pass $i$. During the first phase of this pass, the \textit{expensive filter} is invoked only for elements whose pile index belongs to $I_i$. Once the new boundary $j_i$ is determined, the second phase invokes the \textit{expensive filter} only if the pile index is in $(j_{i-1}, j_i]$. 
 By \Ppass\ construction, we know that $j_i \leq j_{i-1} + 2s$, which means $(j_{i-1}, j_i] \subseteq I_i$. Thus, we can see that:
 \[
 W_i \le \sum_{k \in I_i} |P_k| + \sum_{k=j_{i-1}+1}^{j_i} |P_k| \leq 2\sum_{k \in I_i} |P_k|.
@@ -429,14 +432,14 @@ For some constants $c, c'$. It is easy to see that $T(n, s) \in \mathcal{O}(\ope
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{LIS computation}
-To \Lis, we present an alternative divide-and-conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$ time. This improves on the earlier $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ result.
+To compute the \Lis, we present an alternative divide-and-conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$ time. This improves on the earlier $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ result.
 
 \begin{definition}
-For $x \in A$ let $\textsc{Lis}_x$ be the $longest\ increasing\ subsequence$ of $A$ ending in $x$.
+For $x \in A$ let $\textsc{Lis}_x$ be the \textit{longest increasing subsequence} of $A$ ending in $x$.
 \end{definition}
 
 \begin{definition}
-For integer $x$ and sequence of numbers $A$, let $A_{\leq x}$ be the subsequence of $A$ consisted of elements that are equal of smaller than $x$. Analogously we define $A_{>x}$.
+For an integer $x$ and sequence of numbers $A$, let $A_{\leq x}$ be the subsequence of $A$ consisting of elements that are equal of smaller than $x$. Analogously we define $A_{>x}$.
 \begin{itemize}
 \item $L_{\leq x}$ is a \Lis\ for $A_{\leq x}$.
 \item $L_{>x}$ is a \Lis\ for $A_{>x}$.
@@ -464,7 +467,7 @@ a_t & \text{if } a_t \in A_\ell \\
 Case when $a_t \in A_\ell$ is trivial. Assume $a_t \in A_r$. Now, if $a_t \in P_1$, then the $\textsc{Lis}_{a_t}$ is of
 length $1$, thus by definition $\operatorname{pred}(a_t) = \text{null}$. Now, assume that $a_t \in A_r \land a_t \in P_i \land i > 1$. Then  
 $\textsc{Lis}_{a_t}$ is of length $i$. Since $y = \text{top}(P_{i-1}^{t-1})$ is smaller than $a_t$ (by Observation~\ref{obs:filtering}), and $a_t$ is later in $A$ than $y$, if we append $a_t$ to $\textsc{Lis}_y$ it is still a valid $increasing\ subsequence$.
-Notice that since length of $\textsc{Lis}_y$ is $i-1$, by appending $a_t$ to it we obtained $\textsc{Lis}_{a_t}$. Since $a_t \in A_r$ the last element belonging to $A_\ell$ in $\textsc{Lis}_{a_t}$ is the same one that in $\textsc{Lis}_y$ making $\operatorname{pred}(a_t) = \operatorname{pred}(y)$.  
+Notice that since length of $\textsc{Lis}_y$ is $i-1$, by appending $a_t$ to it we obtain $\textsc{Lis}_{a_t}$. Since $a_t \in A_r$ the last element belonging to $A_\ell$ in $\textsc{Lis}_{a_t}$ is the same one that in $\textsc{Lis}_y$ making $\operatorname{pred}(a_t) = \operatorname{pred}(y)$.  
 \end{proof}
 
 \begin{observation}
