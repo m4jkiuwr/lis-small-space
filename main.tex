@@ -474,12 +474,17 @@ Notice that since length of $\textsc{Lis}_y$ is $i-1$, by appending $a_t$ to it 
 
 \begin{observation}
 Let $a \in A$ be an element that belongs to the last pile. 
-Then for $m = \operatorname{pred}(a)$ concatenation of $L_{\leq m}$ for $A_\ell$ and $L_{> m}$ for $A_r$ is a \Lis.
+Then, for $m = \operatorname{pred}(a)$ concatenation of $L_{\leq m}$ for $A_\ell$ and $L_{> m}$ for $A_r$ is a \Lis.
 \end{observation}
 
 \begin{proof}
-This follows from the definition of $\operatorname{pred}$. Let us choose a $\textsc{Lis}_a$ such that $m$ is the last element in $A_\ell$ that belongs to it.
-Since $a$ is in the last pile $\textsc{Lis}_a$ is a \Lis. Because $m$ is the last element of the left half that belongs to it 
+This follows directly from the definition of $\operatorname{pred}$. Let us choose an element $a$ from the last pile. 
+Consider a $\textsc{Lis}_a$ where $m$ is the last element from $A_\ell$ belonging to this sequence.
+Since $a$ is located in the last pile, $\textsc{Lis}_a$ is a \Lis.
+Because $\textsc{Lis}_a$ is an increasing sequence and $m$ is in it, there exist increasing subsequences $L_1 \text{ and } L_2$, such that $\textsc{Lis}_a$ is their concatenation and $m$ is the last element of $L_1$.
+It immediately follows that each element of $L_1$ is less than or equal to $m$ and each element of $L_2$ is greater than $m$.
+Since $m \in A_\ell$, $L_1$ is a subsequence of $A_\ell$. Because $m$ is the last element from $A_\ell$ in $\textsc{Lis}_a$, $L_2$ is a subsequence of $A_r$.
+Therefore, since $\textsc{Lis}_a$ is a \Lis, $L_1$ is $L_{\leq m}$ and $L_2$ is $L_{> m}$.
 \end{proof}
 
 It can be easily seen how to modify the \Ppass\ procedure and store the pred of an element using only $\mathcal{O}(n)$ time per \Ppass.
