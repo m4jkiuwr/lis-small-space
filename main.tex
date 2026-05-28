@@ -143,12 +143,18 @@
 % polecenia \fmlinebreak.
 \polishtitle    {Problem najdłuższego rosnącego podciągu w małej pamięci}
 \englishtitle   {Longest Increasing Subsequence Problem in Small Space, revisited}
-\polishabstract {\ldots}
+\polishabstract {
+    Dla danej tablicy wejściowej, naszym celem jest znalezienie najdłuższego podciągu rosnącego lub jego długości, przy wykorzystaniu sparametryzowanej pamięci.
+    Powszechnie wiadomo, że problem ten można rozwiązać w czasie $\mathcal{O}(n \log n)$ bez ograniczeń pamięciowych.
+    Dla sparametryzowanej pamięci $s$, gdzie $\sqrt{n} \leq s \leq n$, przedstawiamy ulepszoną analizę algorytmu \Psort\ ze sparametryzowaną pamięcią, opisanego w pracy \cite{kiyomi2017space}. 
+    Pokazujemy, że obliczanie długości najdłuższego podciągu rosnącego tym przy użyciu tego algorytmu działa w czasie $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$. 
+    Przedstawiamy również ulepszony algorytm typu dziel i rządź dla wyznaczania podciągu, który działa w czasie $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$, wykorzystując przy tym $\mathcal{O}(s \log n)$ bitów.
+}
 \englishabstract{
-    Given an input array of comparable elements, we are to find either a longest increasing subsequence, or its length using parametrised space.
-It is well known that this problem can be solved in $\mathcal{O}(n \log n)$ time without constrained memory. For parametrised memory -- $s$, where
-$\sqrt{n} \leq s \leq n$ we present an improved analysis of space parametrised $Patience\ Sorting$ algorithm presented in \cite{kiyomi2017space}. We show that the length computation runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time.
-We also show an improved divide and conquer algorithm for obtaining the sequence running in $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$ time while using $\mathcal{O}(s \log n)$ bits.
+    Given an input array of comparable elements, we aim to find either a longest increasing subsequence, or its length using parametrised space.
+It is well known that this problem can be solved in $\mathcal{O}(n \log n)$ time without memory constraints. For parametrised memory -- $s$, where
+$\sqrt{n} \leq s \leq n$, we present an improved analysis of space-parametrised \Psort\ algorithm introduced in \cite{kiyomi2017space}. We show that the length computation runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time.
+We also present an improved divide-and-conquer algorithm for obtaining the sequence, which runs in $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$ time while using $\mathcal{O}(s \log n)$ bits.
 }
 \author         {Mikołaj Owczarz}
 \advisor        {dr Karol Pokorski}
@@ -178,7 +184,7 @@ In \cite{kiyomi2017space} we can see a variation of \Psort\ that for given $s$ c
 \subsection{Our contribution}
 In this paper we improve the bounds achieved by \cite{kiyomi2017space}. For finding the length of a LIS we conduct a tighter time analysis showing that the proposed in \cite{kiyomi2017space} algorithm actually runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time,
 while maintaining the $\mathcal{O}(s)$ bound for the number of words in the working memory. 
-Next we observe that an alternate, simpler divide and conquer algorithm can be derived, and is more efficient than one provided in \cite{kiyomi2017space}.
+Next we observe that an alternate, simpler divide-and-conquer algorithm can be derived, and is more efficient than one provided in \cite{kiyomi2017space}.
 Combined with the tighter analysis for LIS length computation it runs in $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$.
 
 \subsection{Related work}
@@ -266,9 +272,9 @@ Element $a_t \in P_i$ if and only if a $longest\ increasing\ subsequence$ of $A$
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Space parametrised Patience Sorting}
+\subsection{space-parametrised Patience Sorting}
 
-Now we will define the space parametrised variant of \Psort\ that originates from \cite{kiyomi2017space}.
+Now we will define the space-parametrised variant of \Psort\ that originates from \cite{kiyomi2017space}.
 
 Assume that our working memory is limited to $\mathcal{O}(s)$ words, and $\sqrt{n} \leq s \leq n$.
 Similarly to the classic \Psort\ we will process the input array sequentially while maintaining piles. However, since our memory is limited and we cannot afford
@@ -360,9 +366,9 @@ For single \Ppass\, the time complexity can be written as $\mathcal{O}(n + W \lo
 
 \section{New results}
 
-The complexity analysis for the space parametrised \Psort\ in \cite{kiyomi2017space} for finding \LisLen\ yielded
+The complexity analysis for the space-parametrised \Psort\ in \cite{kiyomi2017space} for finding \LisLen\ yielded
 $\mathcal{O}(\frac{n^2}{s} \log n)$ time. By tighter estimation of the number of calls to the expensive filter procedure defined before we are able to prove, that in fact this algorithm runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$.
-It was also presented in \cite{kiyomi2017space} how to compute the \Lis\ by using divide and conquer algorithm with time complexity of $\mathcal{O}(\frac{n^2}{s} \log^2 n)$. We provide a simpler and more effective Divide and Conquer strategy that combined with improved bound for computing the \LisLen\ runs in $\mathcal{O}({\operatorname{max}(n \log n \log \log n, \frac{n^2}{s})})$ time.
+It was also presented in \cite{kiyomi2017space} how to compute the \Lis\ by using divide-and-conquer algorithm with time complexity of $\mathcal{O}(\frac{n^2}{s} \log^2 n)$. We provide a simpler and more effective divide-and-conquer strategy that combined with improved bound for computing the \LisLen\ runs in $\mathcal{O}({\operatorname{max}(n \log n \log \log n, \frac{n^2}{s})})$ time.
 
 
 \subsection{Length computation}
@@ -381,7 +387,7 @@ Let $W_i$ be the number of $expensive\ filter$ operations during the $i$-th \Ppa
 Let $K$ be the total number of \Ppass -es.
 \end{definition}
 
-By using Observation~\ref{obs:ppass-time} we can see that time complexity of space parametrised \Psort\ for $\sqrt{n} \leq s \leq n$ can be then written as:
+By using Observation~\ref{obs:ppass-time} we can see that time complexity of space-parametrised \Psort\ for $\sqrt{n} \leq s \leq n$ can be then written as:
 \[
 T(n,s) \in \mathcal{O}(nK + \log s \sum_{i=1}^K W_i).
 \]
@@ -423,7 +429,7 @@ For some constants $c, c'$. It is easy to see that $T(n, s) \in \mathcal{O}(\ope
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{LIS computation}
-To \Lis, we present an alternative divide and conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$ time. This improves on the earlier $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ result.
+To \Lis, we present an alternative divide-and-conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$ time. This improves on the earlier $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ result.
 
 \begin{definition}
 For $x \in A$ let $\textsc{Lis}_x$ be the $longest\ increasing\ subsequence$ of $A$ ending in $x$.
