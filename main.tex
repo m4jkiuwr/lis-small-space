@@ -71,6 +71,8 @@
 \usepackage{titlesec}
 \titlespacing*{\section}{0pt}{14pt plus 4pt minus 2pt}{10pt plus 2pt minus 2pt}
 \titlespacing*{\subsection}{0pt}{12pt plus 3pt minus 2pt}{8pt plus 2pt minus 2pt} 
+\usepackage{enumitem}
+\setlist[enumerate]{itemsep=0pt, topsep=0.25\baselineskip, parsep=0pt, partopsep=0pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -288,9 +290,10 @@ More precisely, now we define a procedure \Ppass\ that, given the $i$-th pile $P
 During the first pass it computes an index $j$ such that $i + s \leq j \leq i + 2s \land |P_j| \leq s$ or $j$ is the length of a \Lis. 
 During the second pass, now with given $P_i$ and $j$ it will compute whole $P_j$, or only the $\operatorname{top}(P_j)$ if $j$ is the length of a \Lis.
 
+\newpage
 \begin{observation}\label{obs:filtering} (\cite{kiyomi2017space}, Observation 4.1)
 Suppose we are reading $a_t$, and $a_t \in P_j$. Let $i$ be a fixed integer. \\
-If $j \neq i$, then 
+If $j \neq i$, then:
 \begin{itemize}
 \item $a_t < \operatorname{top}(P_i^{t-1})$ if $j < i$
 \item $a_t > \operatorname{top}(P_i^{t-1})$ if $j > i$
@@ -307,15 +310,14 @@ Suppose we are processing $a_t$. We can encounter one of the following three cas
 \item Otherwise, if $a_t < \operatorname{top}(P_i^{t-1})$, then, by Observation~\ref{obs:filtering}, $k < i$, and we ignore $a_t$.
 \item Otherwise, $a_t > \operatorname{top}(P_i^{t-1})$, and again, by Observation~\ref{obs:filtering}, $k > i$.
 Let $r := \operatorname{top}(P_{i + 2s}^{t-1})$. Then:
-    \begin{enumerate}
-    \item If $r$ exists and $a_t > r$, then $k > i + 2s$, and we ignore $a_t$.
-    \item Otherwise, if $r$ is undefined or $a_t \leq r$, we have $i < k \leq i + 2s$, and $k$ is the smallest index such that $a_t \leq \operatorname{top}(P_k^{t-1})$.
-    \end{enumerate}
+    \begin{enumerate}
+    \item If $r$ exists and $a_t > r$, then $k > i + 2s$, and we ignore $a_t$.
+    \item Otherwise, if $r$ is undefined or $a_t \leq r$, we have $i < k \leq i + 2s$, and $k$ is the smallest index such that $a_t \leq \operatorname{top}(P_k^{t-1})$.
+    \end{enumerate}
 \end{enumerate}
 Observe that if the first case is false, then $\operatorname{top}(P_i^{t-1}) = \operatorname{top}(P_i^{t})$; thus, exactly one of these cases holds.
 
 Notice that if we have the whole $P_i$ in memory, we can process the first two cases in constant time by maintaining a pointer to the most recently read element $h = \operatorname{top}(P_i^{t-1})$ in $P_i$.
-
 In the first case, we compare $a_t$ to the element in $P_i$ that is after $h$. We can determine whether we are in the second or third case by comparing $a_t$ and $h$.
 
 It is easy to see that if we maintain $\operatorname{top}(P_k^{t-1})$ for all $i < k \leq i + 2s$, then we can distinguish cases 3(a) and 3(b) in constant time and find the value of $k$ in 3(b) in $\mathcal{O}(\log s)$ time.
