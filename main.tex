@@ -242,10 +242,11 @@ Let $P$ be some state of the pile (for example $P_3^4$ or $P_2$), then:
 \end{itemize}
 
 It follows from the pile definition that if we are solving the \LisLen\ problem, then our goal is to compute the largest integer $k$ such that $P_k$ is non-empty.
-Classic \Psort\ algorithm achieves that by constructing all piles during a single pass through the input sequence. When reading the $t$-th element of $A$ -- $a_t$, we find
+The classic \Psort\ algorithm achieves that by constructing all piles during a single pass through the input sequence. When reading the $t$-th element of $A$ -- $a_t$, we find
 the smallest $i$ such that $\operatorname{top}(P_i^{t-1}) \geq a_t$ and we push $a_t$ to the top of the $i$-th pile, or we create a new, rightmost pile with a single element $a_t$.
-Notice that by definition each element belongs to exactly one pile, thus for every $t$, if $a_t$ is in $i$-th pile then $P_j^{t-1} = P_j^{t}$ if $j \neq i$ and $P_i^t$ is $P_i^{t-1}$ with $a_t$ pushed on top.
-Because the difference in states of piles changes in a tractable way, we omit the upper indices in the implementation of \Psort\ algorithm below.
+By definition, each element belongs to exactly one pile. Thus, for every $t$, if $a_t$ is in the $i$-th pile then $P_i^t$ is $P_i^{t-1}$ with $a_t$ pushed onto it, and $P_j^t = P_j^{t-1}$ for all $j \neq i$.
+Since copying and storing the pile states at every step would introduce time and memory issues, and the state transitions are straightforward, we can naturally construct the piles on the fly while iterating through $A$.
+Thus, we omit the upper indices in the implementation of \Psort\ algorithm below.
 
 \begin{algorithm}
     \caption{\Psort}
@@ -288,7 +289,7 @@ During the first pass it computes an index $j$ such that $i + s \leq j \leq i + 
 During the second pass, now with given $P_i$ and $j$ it will compute whole $P_j$, or only the $\operatorname{top}(P_j)$ if $j$ is the length of a \Lis.
 
 \begin{observation}\label{obs:filtering} (\cite{kiyomi2017space}, Observation 4.1)
-Suppose we are reading the $t$-th element of $A$ -- $a_t$, and $a_t \in P_j$. Let $i$ be some fixed integer. \\
+Suppose we are reading $a_t$, and $a_t \in P_j$. Let $i$ be a fixed integer. \\
 If $j \neq i$, then 
 \begin{itemize}
 \item $a_t < \operatorname{top}(P_i^{t-1})$ if $j < i$
@@ -297,7 +298,7 @@ If $j \neq i$, then
 \end{observation}
 
 Recall that in \Psort\ procedure, for an element $a_t$, to determine to which pile it belongs it suffices to know only values of the top elements of piles in moment $t-1$. 
-Moreover, by Observation~\ref{obs:filtering} if we want to check if this index -- $k$ belongs to some interval, in our case we want to check if $i \leq k \leq i + 2s$ it suffices to know only top elements 
+Moreover, by Observation~\ref{obs:filtering} if we want to check if this index -- call it $k$, belongs to some interval, in our case we want to check if $i \leq k \leq i + 2s$ it suffices to know only top elements 
 of the piles whose indices are also in this interval. Below we define the \textit{filtering} method for the \Ppass\ procedure. \\
 
 Suppose we are processing $a_t$. We can encounter one of these three cases: 
@@ -313,11 +314,11 @@ Let $r := \operatorname{top}(P_{i + 2s}^{t-1})$, then:
 \end{enumerate}
 Observe that if the first case is false, then $\operatorname{top}(P_i^{t-1}) = \operatorname{top}(P_i^{t})$ thus exactly one of these cases holds. \\
 
-Notice, that if we have whole $P_i$ in the memory we can process the first two cases in constant time by maintaining a pointer to the most recently read element on $P_i$ -- $h = \operatorname{top}(P_i^{t-1})$.
+Notice, that if we have whole $P_i$ in the memory we can process the first two cases in constant time by maintaining a pointer to the most recently read element $h = \operatorname{top}(P_i^{t-1})$ on $P_i$.
 
 In the first case we compare $a_t$ to the element in $P_i$ that is after $h$. We can determine if we are in the second or third case by comparing $a_t$ and $h$.
 
-It is easy to see, that if we maintain $\operatorname{top}(P_k^{t-1})$ for all $i < k \leq i + 2s$ then we can distinguish cases 3(a) and 3(b) in $\mathcal{O}(1)$ and find the value of $k$ in 3(b) in $\mathcal{O}(\log s)$ time.
+It is easy to see, that if we maintain $\operatorname{top}(P_k^{t-1})$ for all $i < k \leq i + 2s$ then we can distinguish cases 3(a) and 3(b) in constant time and find the value of $k$ in 3(b) in $\mathcal{O}(\log s)$ time.
 We will call the search in 3(b) an \textit{expensive filter}. Below we present the \Ppass\ implementation (\cite{kiyomi2017space} Algorithm 3).
 
 \begin{algorithm}[H]
@@ -353,15 +354,15 @@ We will call the search in 3(b) an \textit{expensive filter}. Below we present t
 
 After this pass, if value of $r < i + 2s$ we can conclude that $r$ is the length of a \Lis since no element belongs to a pile with larger index.
 Then we can set $j := r$ and return $j$ as \LisLen\ and $p_j = \operatorname{top}(P_j)$.  
-It is easy to see how to modify the procedure to compute the whole $P_j$ if $j$ is given, we can maintain additional stack and push elements they are in the $j$-th pile.
+It is easy to see how to modify the procedure to compute the whole $P_j$ if $j$ is given, we can maintain additional stack and push elements from the $j$-th pile there.
 
 
 \begin{observation} \label{obs:ppass-advance}
-Since $s > \sqrt{n}$ there is at most $\frac{n}{s} \leq s$ piles with more than $s$ elements which implies that $j > i + s$ 
+Since $s > \sqrt{n}$ there are at most $\frac{n}{s} \leq s$ piles with more than $s$ elements which implies that $j > i + s$.
 \end{observation}
 
 \begin{observation} \label{obs:ppass-time}
-For single \Ppass, the time complexity can be written as $\mathcal{O}(n + W \log s )$, where $W$ is the number of calls to the expensive filter during the procedure.
+The time complexity of a single \Ppass\ is $\mathcal{O}(n + W \log s )$, where $W$ is the number of calls to the expensive filter during the procedure.
 \end{observation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -379,7 +380,7 @@ We provide a tighter time complexity analysis of the \Psort\ algorithm presented
 We show that the algorithm runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time, improving the previous $\mathcal{O}(\frac{n^2}{s} \log n)$ bound.
 
 \begin{definition}
-    Let $j_i$ be the index of the pile kept in memory after $i$-th \Ppass\ with $j_0=0$.
+    Let $j_i$ be the index of the pile kept in memory after $i$-th \Ppass\ and we assume $j_0=0$.
 \end{definition}
 
 \begin{definition}
@@ -486,7 +487,7 @@ and memoising the additional value only for the $\mathcal{O}(s)$ elements that w
 We deduce that the previously mentioned element $m$ can be $\operatorname{pred}(x)$ for any $x$ in the last pile and since computing pred values does not change the time and memory complexity of the \Ppass\ 
 
 \begin{observation}
-The time complexity for solving the \Lis\ can be written as:
+The time complexity for solving the \Lis\ is:
 \[
 T(n, s) = \begin{cases}
 c'n \log n \text{ if } n \leq s \\
