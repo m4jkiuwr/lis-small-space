@@ -1,12 +1,30 @@
-\documentclass[12pt,a4paper]{article}
+% \documentclass[12pt,a4paper]{article}
+
+\documentclass[lic, english, shortabstract]{iithesis}
+
+\makeatletter
+% Define \@pdfcolorstack as a count if it's missing (needed for pdftex)
+\@ifundefined{@pdfcolorstack}{\csname newcount\endcsname\@pdfcolorstack}{}
+
+% Fix section numbering to not include chapter (0.)
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\makeatother
+
+\usepackage[backend=biber, style=ieee]{biblatex}
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage{microtype} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \usepackage{geometry}
-% \geometry{margin=3cm,bindingoffset=1cm,a4paper,onecolumn,twoside}
-
 \geometry{
     a4paper,
     left=25mm, 
@@ -19,11 +37,6 @@
 }
 \usepackage{setspace}
 \onehalfspacing 
-\usepackage{lmodern}
-\usepackage{microtype} 
-
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage{xcolor}
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -31,14 +44,34 @@
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.5pt}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{amsmath, amssymb, amsthm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \usepackage{tcolorbox}
 \tcbuselibrary{skins, breakable, theorems}
+\usepackage{float}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
-\usepackage{float}
 
-\usepackage{graphicx}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{14pt plus 4pt minus 2pt}{10pt plus 2pt minus 2pt}
+\titlespacing*{\subsection}{0pt}{12pt plus 3pt minus 2pt}{8pt plus 2pt minus 2pt} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
@@ -50,15 +83,10 @@
     pdfauthor={Mikołaj Owczarz}
 }
 
-\usepackage[backend=biber, style=ieee]{biblatex}
-\addbibresource{bibliography.bib}
-
-\usepackage{titlesec}
-\titlespacing*{\section}{0pt}{14pt plus 4pt minus 2pt}{10pt plus 2pt minus 2pt}
-\titlespacing*{\subsection}{0pt}{12pt plus 3pt minus 2pt}{8pt plus 2pt minus 2pt} 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \theoremstyle{plain}
+
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
 
@@ -108,28 +136,29 @@
 \newtheorem{definition}{Definition}[section]
 \tcolorboxenvironment{definition}{statementbox}
 
-
-\title{\textbf{Longest Increasing Subsequence Problem in Small Space, revisited\\}}
-
-\date{\today}
-\author{Mikołaj Owczarz}
+% Pamietaj o madrym (zgodnym z logicznym rozbiorem zdania oraz estetyka) recznym
+% zlamaniu wierszy w temacie pracy, zwlaszcza tego w jezyku pracy. Uzyj do tego
+% polecenia \fmlinebreak.
+\polishtitle    {Problem najdłuższego rosnącego podciągu w małej pamięci}
+\englishtitle   {Longest Increasing Subsequence Problem in Small Space, revisited}
+\polishabstract {\ldots}
+\englishabstract{
+    Given an input array of comparable elements, we are to find either a longest increasing subsequence, or its length using parametrised space.
+It is well known that this problem can be solved in $\mathcal{O}(n \log n)$ time without constrained memory. For parametrised memory -- $s$, where
+$\sqrt{n} \leq s \leq n$ we present an improved analysis of space parametrised $Patience\ Sorting$ algorithm presented in \cite{kiyomi2017space}. We show that the length computation runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time.
+We also show an improved divide and conquer algorithm for obtaining the sequence running in $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$ time while using $\mathcal{O}(s \log n)$ bits.
+}
+\author         {Mikołaj Owczarz}
+\advisor        {dr Karol Pokorski}
+\date          {\today}                     % Data zlozenia pracy
+\transcriptnum {345235}                     % Numer indeksu
+\advisorgen    {dr. Karola Pokorskiego} % Nazwisko promotora w dopelniaczu
 
 \begin{document}
 
-\maketitle
-
-\begin{abstract}
-Given an input array of comparable elements, we are to find either a longest increasing subsequence, or its length using parametrised space.
-It is well known that this problem can be solved in $\mathcal{O}(n \log n)$ time without constrained memory. For parametrised memory -- $s$, where
-$\sqrt{n} \leq s \leq n$ we present an improved analysis of space parametrised $Patience\ Sorting$ algorithm presented in \cite{kiyomi2017space}. We show that the length computation runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time.
-We also show an improved Divide \& Conquer algorithm for obtaining the sequence running in $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$ time while using $\mathcal{O}(s \log n)$ bits.
-\end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\tableofcontents
 \newpage
 
 \section{Introduction}
@@ -147,7 +176,7 @@ In \cite{kiyomi2017space} we can see a variation of \Psort\ that for given $s$ c
 \subsection{Our contribution}
 In this paper we improve the bounds achieved by \cite{kiyomi2017space}. For finding the length of a LIS we conduct a tighter time analysis showing that the proposed in \cite{kiyomi2017space} algorithm actually runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time,
 while maintaining the $\mathcal{O}(s)$ bound for the number of words in the working memory. 
-Next we observe that an alternate, simpler Divide \& Conquer algorithm can be derived, and is more efficient than one provided in \cite{kiyomi2017space}.
+Next we observe that an alternate, simpler divide and conquer algorithm can be derived, and is more efficient than one provided in \cite{kiyomi2017space}.
 Combined with the tighter analysis for LIS length computation it runs in $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$.
 
 \subsection{Related work}
@@ -158,6 +187,7 @@ approximation of LIS in any of this setting (\cite{approx-lis}, \cite{approx-lcs
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
 
 \section{Preliminaries}
 
@@ -169,7 +199,7 @@ We define two variants of the Longest Increasing Subsequence problem.
 {The longest subsequence $(a_{i_1}, a_{i_2}, \dots, a_{i_k})$ of $A$ such that $i_1 < i_2 < \dots < i_k$ and $a_{i_1} < a_{i_2} < \dots < a_{i_k}$.}
 
 \problembox
-{Lenght of \Lis \ (\LisLen)}
+{Length of \Lis \ (\LisLen)}
 {A sequence of $n$ numbers $A = (a_1, a_2, \dots, a_n)$.}
 {$k$ -- the largest integer such that there exist an increasing subsequence in $A$ of length $k$}
 
@@ -324,7 +354,7 @@ For single \Ppass\, the time complexity can be written as $\mathcal{O}(n + W \lo
 
 The complexity analysis for the space parametrised \Psort\ in \cite{kiyomi2017space} for finding \LisLen\ yielded
 $\mathcal{O}(\frac{n^2}{s} \log n)$ time. By tighter estimation of the number of calls to the expensive filter procedure defined before we are able to prove, that in fact this algorithm runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$.
-It was also presented in \cite{kiyomi2017space} how to compute the \Lis\ by using Divide \& Conquer algorithm with time complexity of $\mathcal{O}(\frac{n^2}{s} \log^2 n)$. We provide a simpler and more effective Divide and Conquer strategy that combined with improved bound for computing the \LisLen\ runs in $\mathcal{O}({\operatorname{max}(n \log n \log \log n, \frac{n^2}{s})})$ time.
+It was also presented in \cite{kiyomi2017space} how to compute the \Lis\ by using divide and conquer algorithm with time complexity of $\mathcal{O}(\frac{n^2}{s} \log^2 n)$. We provide a simpler and more effective Divide and Conquer strategy that combined with improved bound for computing the \LisLen\ runs in $\mathcal{O}({\operatorname{max}(n \log n \log \log n, \frac{n^2}{s})})$ time.
 
 
 \subsection{Length computation}
@@ -385,14 +415,11 @@ For some constants $c, c'$. It is easy to see that $T(n, s) \in \mathcal{O}(\ope
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{LIS computation}
-To \Lis, we present an alternative Divide \& Conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$ time. This improves on the earlier $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ result.
+To \Lis, we present an alternative divide and conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$ time. This improves on the earlier $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ result.
 
 \begin{definition}
 For $x \in A$ let $\textsc{Lis}_x$ be the $longest\ increasing\ subsequence$ of $A$ ending in $x$.
 \end{definition}
-
-
-
 
 \begin{definition}
 For integer $x$ and sequence of numbers $A$, let $A_{\leq x}$ be the subsequence of $A$ consisted of elements that are equal of smaller than $x$. Analogously we define $A_{>x}$.
@@ -407,7 +434,7 @@ concatenation of $L_{\leq m}$ for $A_\ell$ and $L_{> m}$ for $A_r$ is a \Lis\ fo
 Having such element would allow us to recursively solve \Lis\ for $A_\ell$ and $A_r$ independently. We will show that such element can be found during a single \LisLen\ computation without changing its time and memory complexity.
 
 \begin{definition}
-For $x \in A$, let pred$(x) \in A_\ell$ be such that there is a $\textsc{Lis}_x$ in $A$
+For $x \in A$, let $\operatorname{pred}(x) \in A_\ell$ be such that there is a $\textsc{Lis}_x$ in $A$
 such that the last element of it belonging to $A_\ell$ is pred$(x)$, or null if the length of $\textsc{Lis}_x$ is 1 and $x \notin A_\ell$.
 \end{definition}
 
@@ -420,10 +447,20 @@ a_t & \text{if } a_t \in A_\ell \\
 \end{claim}
 
 \begin{proof}
-If $a_t \in A_\ell$ its trivial, so assume $a_t \in A_r$. Now, if $a_t \in P_1$, then the $\textsc{Lis}_{a_t}$ is of
+Case when $a_t \in A_\ell$ is trivial. Assume $a_t \in A_r$. Now, if $a_t \in P_1$, then the $\textsc{Lis}_{a_t}$ is of
 length $1$, thus by definition $\operatorname{pred}(a_t) = \text{null}$. Now, assume that $a_t \in A_r \land a_t \in P_i \land i > 1$. Then  
 $\textsc{Lis}_{a_t}$ is of length $i$. Since $y = \text{top}(P_{i-1}^{t-1})$ is smaller than $a_t$ (by Observation~\ref{obs:filtering}), and $a_t$ is later in $A$ than $y$, if we append $a_t$ to $\textsc{Lis}_y$ it is still a valid $increasing\ subsequence$.
 Notice that since length of $\textsc{Lis}_y$ is $i-1$, by appending $a_t$ to it we obtained $\textsc{Lis}_{a_t}$. Since $a_t \in A_r$ the last element belonging to $A_\ell$ in $\textsc{Lis}_{a_t}$ is the same one that in $\textsc{Lis}_y$ making $\operatorname{pred}(a_t) = \operatorname{pred}(y)$.  
+\end{proof}
+
+\begin{observation}
+Let $a \in A$ be an element that belongs to the last pile. 
+Then for $m = \operatorname{pred}(a)$ concatenation of $L_{\leq m}$ for $A_\ell$ and $L_{> m}$ for $A_r$ is a \Lis.
+\end{observation}
+
+\begin{proof}
+This follows from the definition of $\operatorname{pred}$. Let us choose a $\textsc{Lis}_a$ such that $m$ is the last element in $A_\ell$ that belongs to it.
+Since $a$ is in the last pile $\textsc{Lis}_a$ is a \Lis. Because $m$ is the last element of the left half that belongs to it 
 \end{proof}
 
 It can be easily seen how to modify the \Ppass\ procedure and store the pred of an element using only $\mathcal{O}(n)$ time per \Ppass.
@@ -443,6 +480,8 @@ For some constants $c, c'$, which is $\mathcal{O}(\operatorname{max}(n \log n \l
 \end{observation}
 This is because we can find the element $m$ during a single \Ppass\ which runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time 
 and then solve on two halves of the input independently.
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
