@@ -172,30 +172,30 @@ We also present an improved divide-and-conquer algorithm for obtaining the seque
 \section{Introduction}
 
 The longest increasing subsequence (LIS for short) problem is a classic algorithmic problem. 
-The input is a sequence of $n$ numbers $A = (a_1, a_2, \dots, a_n)$, and we are to either find the length of LIS -- 
-the largest integer $k$ such that there exist indices $i_1 < i_2 < \dots < i_k$ such that $a_{i_1} < a_{i_2} < \dots < a_{i_k}$, or to return this subsequence.
+The input is a sequence of $n$ numbers $A = (a_1, a_2, \dots, a_n)$, and our goal is either to find the length of the LIS -- 
+the largest integer $k$ for which there exist indices $i_1 < i_2 < \dots < i_k$ such that $a_{i_1} < a_{i_2} < \dots < a_{i_k}$, or to extract such subsequence.
 
 \subsection{Previous results}
-Efficient algorithms for finding the LIS are known, for example the Patience Sorting algorithm devised by Mallows \cite{mallows} that runs in $\mathcal{O}(n \log n)$ for a sequence of length $n$ while using $\mathcal{O}(n)$ words in working space.
-Given a sequence of $n$ elements, \Psort\ assigns each element to a $pile$, where each pile contains an information about the longest increasing subsequence of the input that ends in that element. 
-While the \Psort\ algorithm achieves the lower bound in terms of time complexity for finding a LIS, the question of how little memory one needs to efficiently solve the problem is still unanswered. 
-In \cite{kiyomi2017space} we can see a variation of \Psort\ that for given $s$ can find the length of a LIS in $\mathcal{O}(\frac{n^2}{s} \log n)$ and compute the actual subsequence in $\mathcal{O}(\frac{n^2}{s} \log^2 n)$, but only for $\sqrt{n} \leq s$.
+Efficient algorithms for finding the LIS are well known, for example, the \Psort\ algorithm devised by Mallows \cite{mallows}, which runs in $\mathcal{O}(n \log n)$ time for a sequence of length $n$ while using $\mathcal{O}(n)$ words of working space.
+Given a sequence of $n$ elements, \Psort\ assigns each element to a \textit{pile}, where each pile contains information about the longest increasing subsequence of the input that ends in that element. 
+While the \Psort\ algorithm achieves the lower bound in terms of time complexity for finding the LIS \cite{lis-lb}, the question of how little memory one needs to efficiently solve the problem remains unanswered. 
+A variation of \Psort\ is presented in \cite{kiyomi2017space}, which, for a given memory parameter $s$, can find the length of the LIS in $\mathcal{O}(\frac{n^2}{s} \log n)$ time and compute the actual subsequence in $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ time, but only for $\sqrt{n} \leq s$.
 
 \subsection{Our contribution}
-In this paper we improve the bounds achieved by \cite{kiyomi2017space}. For finding the length of a LIS we conduct a tighter time analysis showing that the proposed in \cite{kiyomi2017space} algorithm actually runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time,
+In this paper, we improve the bounds achieved in \cite{kiyomi2017space}. For finding the length of the LIS, we conduct a tighter time analysis, showing that the algorithm proposed in \cite{kiyomi2017space} actually runs in $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time,
 while maintaining the $\mathcal{O}(s)$ bound for the number of words in the working memory. 
-Next we observe that an alternate, simpler divide-and-conquer algorithm can be derived, and is more efficient than one provided in \cite{kiyomi2017space}.
-Combined with the tighter analysis for LIS length computation it runs in $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$.
+Next, we observe that an alternative, simpler divide-and-conquer algorithm can be derived, which is more efficient than the one provided in \cite{kiyomi2017space}.
+Combined with the tighter analysis for the LIS length computation, it runs in $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ time.
 
 \subsection{Related work}
-The LIS problem, besides the classic setting, has many heavily-researched variations.
-For example we could ask for the longest increasing subsequence only one some part of the input by making range queries (\cite{range-lis}).
-We can also ask about maintaining the LIS in dynamic setting (\cite{dynamic-lis}, \cite{dynamic-lis-lb}). Another interesting question is 
-approximation of LIS in any of this setting (\cite{approx-lis}, \cite{approx-lcs}). 
+The LIS problem, in addition to its classic setting, has many heavily-researched variations.
+For example, we could ask for the longest increasing subsequence only on some part of the input by making range queries \cite{range-lis}.
+We can also ask about maintaining the LIS in a dynamic setting \cite{dynamic-lis, dynamic-lis-lb}. Another interesting question is 
+the approximation of the LIS in any of these settings \cite{approx-lis, approx-lcs}. 
 
 \subsection{Applications}
-As one of the most classic algorithmic problems, LIS has a variety of applications across diverse scientific domains.
-In bioinformatics, LIS is a fundamental tool for genome rearrangement analysis and sequence alignment, where it is often used to find maximum weight traces or to solve the Longest Common Subsequence (LCS) problem for some special cases \cite{delcher1999alignment}. 
+As one of the most classic algorithmic problems, the LIS problem has a variety of applications across diverse scientific domains.
+In bioinformatics, the LIS is a fundamental tool for genome rearrangement analysis and sequence alignment, where it is often used to find maximum weight traces or to solve the Longest Common Subsequence (LCS) problem for some special cases \cite{delcher1999alignment}. 
 It also plays a crucial role in statistical physics and probability theory; notably, the distribution of the length of the LIS in random permutations is a central topic in the study of random matrices and the Tracy-Widom distribution \cite{baik1999distribution}. 
 Additionally, LIS algorithms are used in data analysis for identifying trends in time-series data and in version control systems for sequence differencing, for example in the well-known \texttt{diff} command.
 
