@@ -1,6 +1,6 @@
 % \documentclass[12pt,a4paper]{article}
 
-\documentclass[lic, english, shortabstract]{iithesis}
+\documentclass[lic, english, shortabstract, oneside]{iithesis}
 
 \makeatletter
 % Define \@pdfcolorstack as a count if it's missing (needed for pdftex)
@@ -27,13 +27,15 @@
 \usepackage{geometry}
 \geometry{
     a4paper,
+    oneside,
     left=25mm, 
     right=25mm,
     top=25mm,
     bottom=25mm,
     headheight=15pt,
     headsep=10mm,
-    footskip=12mm
+    footskip=12mm,
+    bindingoffset=0mm
 }
 \usepackage{setspace}
 \onehalfspacing 
@@ -184,6 +186,12 @@ The LIS problem, besides the classic setting, has many heavily-researched variat
 For example we could ask for the longest increasing subsequence only one some part of the input by making range queries (\cite{range-lis}).
 We can also ask about maintaining the LIS in dynamic setting (\cite{dynamic-lis}, \cite{dynamic-lis-lb}). Another interesting question is 
 approximation of LIS in any of this setting (\cite{approx-lis}, \cite{approx-lcs}). 
+
+\subsection{Applications}
+As one of the most classic algorithmic problems, LIS has a variety of applications across diverse scientific domains.
+In bioinformatics, LIS is a fundamental tool for genome rearrangement analysis and sequence alignment, where it is often used to find maximum weight traces or to solve the Longest Common Subsequence (LCS) problem for some special cases \cite{delcher1999alignment}. 
+It also plays a crucial role in statistical physics and probability theory; notably, the distribution of the length of the LIS in random permutations is a central topic in the study of random matrices and the Tracy-Widom distribution \cite{baik1999distribution}. 
+Additionally, LIS algorithms are used in data analysis for identifying trends in time-series data and in version control systems for sequence differencing, for example in the well-known \texttt{diff} command.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
