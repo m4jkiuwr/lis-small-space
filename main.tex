@@ -297,29 +297,30 @@ If $j \neq i$, then
 \end{itemize} 
 \end{observation}
 
-Recall that in \Psort\ procedure, for an element $a_t$, to determine to which pile it belongs it suffices to know only values of the top elements of piles in moment $t-1$. 
-Moreover, by Observation~\ref{obs:filtering} if we want to check if this index -- call it $k$, belongs to some interval, in our case we want to check if $i \leq k \leq i + 2s$ it suffices to know only top elements 
-of the piles whose indices are also in this interval. Below we define the \textit{filtering} method for the \Ppass\ procedure. \\
+Recall that in the \Psort\ algorithm, for an element $a_t$, to determine to which pile it belongs, it suffices to know only the values of the top elements of the piles at step $t-1$. 
+Moreover, by Observation~\ref{obs:filtering}, if we want to check whether this index -- call it $k$, belongs to a specific interval---in our case, whether $i \leq k \leq i + 2s$---it suffices to know only the top elements of the piles whose indices are also in this interval.
+Below, we define the \textit{filtering} method for the \Ppass\ procedure.
 
-Suppose we are processing $a_t$. We can encounter one of these three cases: 
+Suppose we are processing $a_t$. We can encounter one of the following three cases: 
 \begin{enumerate}
 \item If $a_t = \operatorname{top}(P_i^t)$, then $k = i$.
-\item Otherwise, if $a_t < \operatorname{top}(P_i^{t-1})$, then by Observation~\ref{obs:filtering}, $k < i$ and we ignore $a_t$.
-\item Otherwise $a_t > \operatorname{top}(P_i^{t-1})$, and again by Observation~\ref{obs:filtering}, $k > i$. \\
-Let $r := \operatorname{top}(P_{i + 2s}^{t-1})$, then:
-    \begin{enumerate}
-    \item if $r$ exists and $a_t > r$, then $k > i + 2s$ and we ignore $a_t$.
-    \item else if $r$ is undefined or $a_t \leq r$, we have $i < k \leq i + 2s$, and $k$ is the smallest index such that $a_t \leq \operatorname{top}(P_k^{t-1})$.
-    \end{enumerate}
+\item Otherwise, if $a_t < \operatorname{top}(P_i^{t-1})$, then, by Observation~\ref{obs:filtering}, $k < i$, and we ignore $a_t$.
+\item Otherwise, $a_t > \operatorname{top}(P_i^{t-1})$, and again, by Observation~\ref{obs:filtering}, $k > i$.
+Let $r := \operatorname{top}(P_{i + 2s}^{t-1})$. Then:
+    \begin{enumerate}
+    \item If $r$ exists and $a_t > r$, then $k > i + 2s$, and we ignore $a_t$.
+    \item Otherwise, if $r$ is undefined or $a_t \leq r$, we have $i < k \leq i + 2s$, and $k$ is the smallest index such that $a_t \leq \operatorname{top}(P_k^{t-1})$.
+    \end{enumerate}
 \end{enumerate}
-Observe that if the first case is false, then $\operatorname{top}(P_i^{t-1}) = \operatorname{top}(P_i^{t})$ thus exactly one of these cases holds. \\
+Observe that if the first case is false, then $\operatorname{top}(P_i^{t-1}) = \operatorname{top}(P_i^{t})$; thus, exactly one of these cases holds.
 
-Notice, that if we have whole $P_i$ in the memory we can process the first two cases in constant time by maintaining a pointer to the most recently read element $h = \operatorname{top}(P_i^{t-1})$ on $P_i$.
+Notice that if we have the whole $P_i$ in memory, we can process the first two cases in constant time by maintaining a pointer to the most recently read element $h = \operatorname{top}(P_i^{t-1})$ in $P_i$.
 
-In the first case we compare $a_t$ to the element in $P_i$ that is after $h$. We can determine if we are in the second or third case by comparing $a_t$ and $h$.
+In the first case, we compare $a_t$ to the element in $P_i$ that is after $h$. We can determine whether we are in the second or third case by comparing $a_t$ and $h$.
 
-It is easy to see, that if we maintain $\operatorname{top}(P_k^{t-1})$ for all $i < k \leq i + 2s$ then we can distinguish cases 3(a) and 3(b) in constant time and find the value of $k$ in 3(b) in $\mathcal{O}(\log s)$ time.
-We will call the search in 3(b) an \textit{expensive filter}. Below we present the \Ppass\ implementation (\cite{kiyomi2017space} Algorithm 3).
+It is easy to see that if we maintain $\operatorname{top}(P_k^{t-1})$ for all $i < k \leq i + 2s$, then we can distinguish cases 3(a) and 3(b) in constant time and find the value of $k$ in 3(b) in $\mathcal{O}(\log s)$ time.
+We will call the search in 3(b) an \textit{expensive filter}. Below, we present the \Ppass\ implementation (Algorithm 3 in \cite{kiyomi2017space}).
+
 
 \begin{algorithm}[H]
     \caption{First pass in \Ppass, assume $P_i$ is given, and $|P_i| < s$}
@@ -352,10 +353,9 @@ We will call the search in 3(b) an \textit{expensive filter}. Below we present t
     \end{algorithmic}
 \end{algorithm}
 
-After this pass, if value of $r < i + 2s$ we can conclude that $r$ is the length of a \Lis since no element belongs to a pile with larger index.
-Then we can set $j := r$ and return $j$ as \LisLen\ and $p_j = \operatorname{top}(P_j)$.  
-It is easy to see how to modify the procedure to compute the whole $P_j$ if $j$ is given, we can maintain additional stack and push elements from the $j$-th pile there.
-
+After this pass, if $r < i + 2s$, we can conclude that $r$ is the length of the \Lis, since no element belongs to a pile with a larger index.
+Then, we can set $j := r$ and return $j$ as the \LisLen, along with $p_j = \operatorname{top}(P_j)$. 
+It is easy to see how to modify the procedure to compute the whole $P_j$ if $j$ is given: we can maintain an additional stack and push the elements that belong to the $j$-th pile onto it.
 
 \begin{observation} \label{obs:ppass-advance}
 Since $s > \sqrt{n}$ there are at most $\frac{n}{s} \leq s$ piles with more than $s$ elements which implies that $j > i + s$.
