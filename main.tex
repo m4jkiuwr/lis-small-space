@@ -495,19 +495,65 @@ and memoising the additional value only for the $\mathcal{O}(s)$ elements that w
 We deduce that the previously mentioned element $m$ can be $\operatorname{pred}(x)$ for any $x$ in the last pile and since computing pred values does not change the time and memory complexity of the \Ppass\ 
 
 \begin{observation}
-The time complexity for solving the \Lis\ is:
+The time complexity for solving the \Lis\ can be written as:
 \[
 T(n, s) = \begin{cases}
 c'n \log n \text{ if } n \leq s \\
-2T(\frac{n}{2}, s) + c\max(n \log n, \frac{n^2}{s}) \text{ otherwise}
+2T(\frac{n}{2}, s) + c\operatorname{max}(n \log n, \frac{n^2}{s}) \text{ otherwise}
 \end{cases}
 \]
-For some constants $c, c'$, which is $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$.
+For some constants $c, c'$, which is $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$.
 \end{observation}
-This is because we can find the element $m$ during a single \Ppass\ which runs in $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time 
+This is because we can find the element $m$ during a single \Ppass\ which runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time 
 and then solve on two halves of the input independently.
 
+Below we provide the algorithm for computing \Lis\ in pseudocode.
+First we define a slightly modified version of \Ppass\ that will allow us to compute $L_{\leq x}$ and $L_{> x}$ for some $x$ by ignoring elements bigger than $x$ or elements smaller than or equal to $x$ respectively.
+We will assume that if we are storing an element in working memory, then we also store its $\operatorname{pred}$. 
 
+\begin{algorithm}[H]
+    \caption{\Ppass\ -- the second pass through an array, computing $P_j$}
+    \label{alg:ppas-mod}
+    \begin{algorithmic}[1]
+        \Require sequence $A$, space limit $s$, pile $P_i$, value $lb$, value $ub$, value of pile we are computing $j$
+
+        \State set $h := 0$ 
+        \State set $r := i$
+        \State set $p_{i+1}, p_{i+2}, \ldots, p_{j}$ to $\infty$ 
+        \State create an empty pile $P_j$
+        \For{$a_t \in A$} 
+
+            \If{$a_t$ is $P_i[h+1]$} \Comment{\textcolor{gray}{$a_t$ is the next element in $P_i$}}
+                \State set $h := h + 1$ 
+                \State continue
+            \ElsIf {$a_t < P_i[h]$ or $a_t > p_j$ or $a_t > ub$ or $a_t \leq lb$} 
+                \State continue
+            \EndIf
+
+            \If{$a_t > p_r$}
+                \State set $r := r + 1$ and $k := r$
+            \Else
+                \State set $k$ to be the smallest such that $a_t < p_k$
+            \EndIf
+            
+            \If{$t \leq \frac{|A|}{2}$}
+                \State $\operatorname{pred}(a_t) := a_t$
+            \ElsIf{$k = 1$}
+                \State $\operatorname{pred}(a_t) := null$
+            \Else 
+                \State $\operatorname{pred}(a_t) := \operatorname{pred}(\operatorname{top}(P_{k-1}))$
+            \EndIf
+
+            \State set $p_k := a_t$
+
+            \If{$k = j$}
+                \State push $a_t$ onto $P_j$
+            \EndIf
+        \EndFor
+
+    \Return $P_j$
+    \end{algorithmic}
+\end{algorithm}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
