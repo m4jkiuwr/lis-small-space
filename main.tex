@@ -497,18 +497,19 @@ We can also see that to compute pred for any element that is not filtered out du
 and memoising the additional value only for the $\mathcal{O}(s)$ elements that we already store in memory, thus keeping both time and memory complexity with respect to big-$\mathcal{O}$ notation.
 We deduce that the previously mentioned element $m$ can be $\operatorname{pred}(x)$ for any $x$ in the last pile and since computing pred values does not change the time and memory complexity of the \Ppass\ 
 
-\begin{observation}
-The time complexity for solving the \Lis\ can be written as:
-\[
-T(n, s) = \begin{cases}
+\begin{observation}The time complexity for solving the \Lis\ can be written as:
+$$T(n, s) = \begin{cases}
 c'n \log n \text{ if } n \leq s \\
 2T(\frac{n}{2}, s) + c\operatorname{max}(n \log n, \frac{n^2}{s}) \text{ otherwise}
-\end{cases}
-\]
+\end{cases}$$
 For some constants $c, c'$, which is $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$.
 \end{observation}
-This is because we can find the element $m$ during a single \Ppass\ which runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time 
-and then solve on two halves of the input independently.
+This is because we can find the element $m$ during a single \Ppass\ which runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time and then solve on two halves of the input independently.
+
+To justify the complexity bound suppose that we claim $T(n, s) = 2T(\frac{n}{2}, s) + c_1n \log n + c_2\frac{n^2}{s}$ when $n > s$ for some constants $c_1, c_2$.
+Notice that $n \log n$ dominates over $\frac{n^2}{s}$ when $s > \frac{n}{\log n}$, and there are at most $\log \log n$ such levels until the base case $n \leq s$ is reached, contributing at most $\mathcal{O}(n \log n \log \log n)$ to the total work.
+Otherwise, when $\frac{n^2}{s}$ dominates, the recursion yields $\mathcal{O}(\frac{n^2}{s})$. 
+Therefore, the final time complexity is $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$.
 
 Below we provide the algorithm for computing \Lis\ in pseudocode.
 First we define a slightly modified version of \Ppass\ that will allow us to compute $L_{\leq x}$ and $L_{> x}$ for some $x$ by ignoring elements bigger than $x$ or elements smaller than or equal to $x$ respectively.
