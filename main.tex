@@ -419,11 +419,14 @@ This gives us:
 \sum_{i=1}^K W_i \le 2\sum_{i=1}^K \sum_{k \in I_i} |P_k|.
 \]
 
-By \Ppass\ construction (Observation~\ref{obs:ppass-advance}) we have $j_i \ge j_{i-1}+s$. This implies that the left endpoints of the intervals $I_i$ advance by at least $s$ in each pass. Since each interval $I_i$ has a width of exactly $2s$, any pile index $k$ can belong to at most two intervals $I$. Therefore, summing the pile sizes over all intervals yields at most twice the total number of elements:
+By \Ppass\ construction (Observation~\ref{obs:ppass-advance}) we have $j_i \ge j_{i-1}+s$  or $j_i$ is the length of \Lis.
+This implies that the left endpoints of the intervals $I_i$ advance by at least $s$ for all but the last pass.
+Observe that when not counting the last pass each interval $I_i$ has a width of exactly $2s$, any pile index $k$ can belong to at most two intervals $I$.
+Therefore, summing the pile sizes over all intervals yields at most twice the total number of elements:
 \[
-\sum_{i=1}^K \sum_{k \in I_i} |P_k| \le 2\sum_{k=1}^n |P_k| = 2n.
+\sum_{i=1}^{K-1} \sum_{k \in I_i} |P_k| + \sum_{k \in I_K} |P_k| \le 2\sum_{k=1}^n |P_k| + \sum_{k=1}^n |P_k|  = 3n.
 \]
-Thus, we get $\sum_{i=1}^K W_i \le 4n \in \mathcal{O}(n)$.
+Thus, we get $\sum_{i=1}^K W_i \le 6n \in \mathcal{O}(n)$.
 \end{proof}
 
 Because after each \Ppass\ we advance at least by $s$ piles and the largest possible pile index is $n$, $K \in \mathcal{O}(\frac{n}{s})$, which gives us the total running time:
@@ -562,13 +565,13 @@ Now, using this modified \Ppass\ procedure, we define the \LisLen\ procedure. It
     \label{alg:lislen}
     \begin{algorithmic}[1]
         \Require sequence $A$, space limit $s$, values $lb, ub$
-        \State set $i := 0$ and $P_0 := \{lb\}$ \Comment{\textcolor{gray}{Start from the virtual $0$-th pile}}
+        \State set $i := 0$ and make an empty pile -- $P_0$
         \Repeat
             \State $j := \text{run first pass of \Ppass\ with } P_i, lb, ub$ \Comment{\textcolor{gray}{Find the next reachable pile $j$}}
-            \State $P_j := \text{run second pass of \Ppass\ with } P_i, j, lb, ub$ \Comment{\textcolor{gray}{Compute the full contents of $P_j$}}
-            \State set $i := j$ and $P_i := P_j$ \Comment{\textcolor{gray}{Advance to the next block of piles}}
-        \Until{$i$ is the length of \Lis} \Comment{\textcolor{gray}{Repeat until no more piles can be formed}}
-        \State \Return $(i, \operatorname{pred}(\operatorname{top}(P_i)))$ \Comment{\textcolor{gray}{Return length and the split element $m$}}
+            \State $P_j := \text{run second pass of \Ppass\ with } P_i, j, lb, ub$ 
+            \State set $i := j$ and $P_i := P_j$ 
+        \Until{$i$ is the length of \Lis}
+        \State \Return $(i, \operatorname{pred}(\operatorname{top}(P_i)))$ \Comment{\textcolor{gray}{Return length and the element $m$}}
     \end{algorithmic}
 \end{algorithm}
 
