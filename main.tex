@@ -319,7 +319,6 @@ More precisely, now we define a procedure \Ppass\ that, given the $i$-th pile $P
 During the first pass it computes an index $j$ such that $i + s \leq j \leq i + 2s \land |P_j| \leq s$ or $j$ is the length of a \Lis. 
 During the second pass, now with given $P_i$ and $j$ it will compute whole $P_j$, or only the $\operatorname{top}(P_j)$ if $j$ is the length of a \Lis.
 
-\newpage
 \begin{observation}\label{obs:filtering} (\cite{kiyomi2017space}, Observation 4.1)
 Suppose we are reading $a_t$, and $a_t \in P_j$. Let $i$ be a fixed integer. \\
 If $j \neq i$, then:
@@ -543,8 +542,7 @@ Therefore, the final time complexity is $\mathcal{O}(\operatorname{max}(n \log n
 Below we provide the algorithm for computing \Lis\ in pseudocode.
 First we define a slightly modified version of \Ppass\ that will allow us to compute $L_{\leq x}$ and $L_{> x}$ for some $x$ by ignoring elements bigger than $x$ or elements smaller than or equal to $x$ respectively.
 We will assume that if we are storing an element in working memory, then we also store its $\operatorname{pred}$.
-
-\begin{algorithm}[H]
+\begin{algorithm}
     \caption{\Ppass\ -- the second pass through an array, computing $P_j$}
     \label{alg:ppas-mod}
     \begin{algorithmic}[1]
