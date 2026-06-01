@@ -1,6 +1,6 @@
 % \documentclass[12pt,a4paper]{article}
 
-\documentclass[lic, english, shortabstract, oneside]{iithesis}
+\documentclass[lic, english, shortabstract]{iithesis}
 
 \makeatletter
 % Define \@pdfcolorstack as a count if it's missing (needed for pdftex)
@@ -11,23 +11,21 @@
 \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
 \makeatother
 
-\usepackage[backend=biber, style=ieee]{biblatex}
-\addbibresource{bibliography.bib}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
 \usepackage{lmodern}
 \usepackage{microtype} 
+\usepackage{csquotes}
+
+\usepackage[backend=biber, style=ieee]{biblatex}
+\addbibresource{bibliography.bib}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \usepackage{geometry}
 \geometry{
     a4paper,
-    oneside,
     left=25mm, 
     right=25mm,
     top=25mm,
