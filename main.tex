@@ -265,7 +265,6 @@ For integers $i, t$, we refer to the state of the $i$-th pile after reading the 
 \end{definition}
 Now we define some useful operations that can be conducted on piles.
 Let $P$ be some state of the pile (for example $P_3^4$ or $P_2$), then:
-
 \begin{itemize}
 \item $|P|$ is the number of elements that belong to $P$
 \item $\operatorname{top}(P)$ refers to the element on the top of the pile (the one that was added most recently to it), or null if $P$ is empty.
@@ -308,7 +307,6 @@ Element $a_t \in P_i$ if and only if a \textit{longest increasing subsequence} o
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Space-parametrised Patience Sorting}
-
 Now we define the space-parametrised variant of \Psort\ that originates from \cite{kiyomi2017space}.
 
 Assume that our working memory is limited to $\mathcal{O}(s)$ words, and $\sqrt{n} \leq s \leq n$.
@@ -331,7 +329,6 @@ If $j \neq i$, then:
 Recall that in the \Psort\ algorithm, for an element $a_t$, to determine to which pile it belongs, it suffices to know only the values of the top elements of the piles at step $t-1$. 
 Moreover, by Observation~\ref{obs:filtering}, if we want to check whether this index -- call it $k$, belongs to a specific interval---in our case, whether $i \leq k \leq i + 2s$---it suffices to know only the top elements of the piles whose indices are also in this interval.
 Below, we define the \textit{filtering} method for the \Ppass\ procedure.
-
 Suppose we are processing $a_t$. We can encounter one of the following three cases: 
 \begin{enumerate}
 \item If $a_t = \operatorname{top}(P_i^t)$, then $k = i$.
@@ -351,8 +348,7 @@ In the first case, we compare $a_t$ to the element in $P_i$ that is after $h$. W
 It is easy to see that if we maintain $\operatorname{top}(P_k^{t-1})$ for all $i < k \leq i + 2s$, then we can distinguish cases 3(a) and 3(b) in constant time and find the value of $k$ in 3(b) in $\mathcal{O}(\log s)$ time.
 We will call the search in 3(b) an \textit{expensive filter}. Below, we present the \Ppass\ implementation (Algorithm 3 in \cite{kiyomi2017space}).
 
-
-\begin{algorithm}[H]
+\begin{algorithm}
     \caption{First pass in \Ppass, assume $P_i$ is given, and $|P_i| < s$}
     \begin{algorithmic}[1]
     \State set $h := 0$ \Comment{\textcolor{gray}{$h$ points to the most recently read element in $P_{i}$}}
