@@ -171,7 +171,7 @@ We also present an improved divide-and-conquer algorithm for obtaining the seque
 
 \newpage
 
-\section{Introduction}
+\section{Introduction[EN]}
 
 The longest increasing subsequence (LIS for short) problem is a classic algorithmic problem. 
 The input is a sequence of $n$ numbers $A = (a_1, a_2, \dots, a_n)$, and our goal is either to find the length of the LIS -- 
@@ -203,7 +203,38 @@ Additionally, LIS algorithms are used in data analysis for identifying trends in
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
+
+\section{Introduction[PL]}
+
+Problem najdłuższego podciągu rosnącego (w skrócie LIS, od ang. \textit{longest increasing subsequence}) jest klasycznym problemem algorytmicznym. 
+Dla danych wejściowych -- sekwencji $n$ liczb $A = (a_1, a_2, \dots, a_n)$ naszym celem jest znalezienie długości LIS -– 
+największej liczby całkowitej $k$, dla której istnieją indeksy $i_1 < i_2 < \dots < i_k$ takie, że $a_{i_1} < a_{i_2} < \dots < a_{i_k}$, lub wyznaczenie takiego podciągu.
+
+\subsection{Dotychczasowe wyniki}
+Wydajne algorytmy znajdowania LIS są dobrze znane.
+Przykładem jest algorytm \Psort\ opracowany przez Mallowsa \cite{mallows}, który działa w czasie $\mathcal{O}(n \log n)$ dla ciągu o długości $n$, wykorzystując przy tym $\mathcal{O}(n)$ słów pamięci roboczej.
+Mając dany ciąg $n$ elementów, algorytm \Psort\ przypisuje każdy element do pewnego \textit{stosu} (\textit{pile}), gdzie każdy stos zawiera informacje o najdłuższym rosnącym podciągu wejścia, który kończy się tym elementem. 
+Chociaż algorytm \Psort\ osiąga dolną granicę złożoności czasowej dla problemu znajdowania LIS \cite{lis-lb}, pytanie o to, jak mało pamięci potrzeba do jego wydajnego rozwiązania, pozostaje bez odpowiedzi. 
+W pracy \cite{kiyomi2017space} zaprezentowano wariant algorytmu \Psort, który dla zadanego parametru pamięci $s$ potrafi znaleźć długość LIS w czasie $\mathcal{O}(\frac{n^2}{s} \log n)$ oraz wyznaczyć sam podciąg w czasie $\mathcal{O}(\frac{n^2}{s} \log^2 n)$, jednakże z dodatkowym warunkiem -- $\sqrt{n} \leq s$.
+
+\subsection{Nasz wkład}
+W niniejszej pracy poprawiamy ograniczenia uzyskane w \cite{kiyomi2017space}.
+W przypadku obliczania długości LIS przeprowadzamy ściślejszą analizę czasową, pokazując, że algorytm zaproponowany w \cite{kiyomi2017space} w rzeczywistości działa w czasie $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$,
+zachowując jednocześnie ograniczenie $\mathcal{O}(s)$ na liczbę słów w pamięci roboczej. 
+Następnie zauważamy, że można wyprowadzić alternatywny, prostszy algorytm typu „dziel i rządź”, który jest wydajniejszy niż ten przedstawiony w \cite{kiyomi2017space}
+i w połączeniu ze ściślejszą analizą obliczania długości LIS, działa on w czasie $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$.
+
+\subsection{Prace powiązane}
+Problem LIS, oprócz swojego klasycznego sformułowania, posiada wiele intensywnie badanych wariantów.
+Na przykład, możemy szukać najdłuższego podciągu rosnącego tylko na pewnej części wejścia, wykonując zapytania na spójnych przedziałach ciągu wejściowego \cite{range-lis}.
+Możemy również rozważać dynamiczne utrzymanie LIS \cite{dynamic-lis, dynamic-lis-lb}. Innym interesującym zagadnieniem jest 
+aproksymacja LIS w dowolnym z tych wariantów \cite{approx-lis, approx-lcs}.
+
+\subsection{Zastosowania}
+Jako jeden z najbardziej klasycznych problemów algorytmicznych, problem LIS znajduje szereg zastosowań w różnych dziedzinach nauki.
+W bioinformatyce LIS jest podstawowym narzędziem do analizy rearanżacji genomów oraz dopasowywania sekwencji (ang. \textit{sequence alignment}), gdzie często służy do znajdowania ścieżek o maksymalnej wadze (ang. \textit{maximum weight traces}) lub do rozwiązywania problemu najdłuższego wspólnego podciągu (LCS) dla pewnych szczególnych przypadków \cite{delcher1999alignment}. 
+Odgrywa również kluczową rolę w fizyce statystycznej i teorii prawdopodobieństwa; w szczególności rozkład długości LIS w losowych permutacjach jest głównym tematem badań nad macierzami losowymi i rozkładem Tracy'ego-Widoma \cite{baik1999distribution}. 
+Ponadto algorytmy LIS są wykorzystywane w analizie danych do identyfikacji trendów w szeregach czasowych, a także w systemach kontroli wersji do wyszukiwania różnic w sekwencjach, czego przykładem jest dobrze znane polecenie \texttt{diff}.
 
 \section{Preliminaries}
 
@@ -608,8 +639,10 @@ Initially we call the procedure with values $lb, ub$ set to $-\infty$ and $\inft
 \section{Algorithm performance results}
 
 \section{Summary}
-\subsection{Conclusion}
-\subsection{Open questions}
+
+
+
+
 
 
 \printbibliography
