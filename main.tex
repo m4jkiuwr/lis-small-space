@@ -144,17 +144,24 @@
 \polishtitle    {Problem najdłuższego rosnącego podciągu w małej pamięci}
 \englishtitle   {Longest Increasing Subsequence Problem in Small Space, revisited}
 \polishabstract {
-    Dla danej tablicy wejściowej, naszym celem jest znalezienie najdłuższego podciągu rosnącego lub jego długości, przy wykorzystaniu sparametryzowanej pamięci.
-    Powszechnie wiadomo, że problem ten można rozwiązać w czasie $\mathcal{O}(n \log n)$ bez ograniczeń pamięciowych.
-    Dla sparametryzowanej pamięci $s$, gdzie $\sqrt{n} \leq s \leq n$, przedstawiamy ulepszoną analizę algorytmu \Psort\ ze sparametryzowaną pamięcią, opisanego w pracy \cite{kiyomi2017space}. 
-    Pokazujemy, że obliczanie długości najdłuższego podciągu rosnącego tym przy użyciu tego algorytmu działa w czasie $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$. 
-    Przedstawiamy również ulepszony algorytm typu dziel i rządź dla wyznaczania podciągu, który działa w czasie $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$, wykorzystując przy tym $\mathcal{O}(s \log n)$ bitów.
+Podciąg tablicy to dowolny ciąg, który można uzyskać poprzez usunięcie niektórych elementów z oryginalnej tablicy i zachowanie pozostałych w niezmienionym porządku.
+Dla danej tablicy wejściowej porównywalnych elementów, naszym celem jest znalezienie najdłuższego rosnącego podciągu lub jego długości przy użyciu sparametryzowanej pamięci.
+Powszechnie wiadomo, że bez ograniczeń pamięciowych problem ten można rozwiązać w czasie $\mathcal{O}(n \log n)$.W pracy~\cite{kiyomi2017space} autorzy zaprezentowali algorytm \Psort\ ze sparametryzowaną pamięcią.
+Przy ograniczeniu $s$ na liczbę słów dozwolonych w pamięci roboczej (gdzie $\sqrt{n} \leq s \leq n$), ich algorytm oblicza długość LIS w czasie $\mathcal{O}(\frac{n^2}{s} \log n)$.
+Przedstawili również algorytm do odtwarzania LIS w czasie $\mathcal{O}(\frac{n^2}{s} \log^2 n)$.
+W niniejszej pracy prezentujemy ulepszoną analizę algorytmu \Psort\ ze sparametryzowaną pamięcią, wprowadzonego w pracy~\cite{kiyomi2017space}.
+Pokazujemy, że obliczanie długości działa w czasie $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$.
+Prezentujemy również ulepszony algorytm typu „dziel i zwyciężaj” (divide-and-conquer) do odtwarzania podciągu, który działa w czasie $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$, zużywając przy tym $\mathcal{O}(s)$ słów w pamięci roboczej.
 }
 \englishabstract{
-    Given an input array of comparable elements, we aim to find either a longest increasing subsequence, or its length using parametrised space.
-It is well known that this problem can be solved in $\mathcal{O}(n \log n)$ time without memory constraints. For parametrised memory -- $s$, where
-$\sqrt{n} \leq s \leq n$, we present an improved analysis of space-parametrised \Psort\ algorithm introduced in \cite{kiyomi2017space}. We show that the length computation runs in $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time.
-We also present an improved divide-and-conquer algorithm for obtaining the sequence, which runs in $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ time while using $\mathcal{O}(s \log n)$ bits.
+A subsequence of an array is any sequence that can be derived by deleting some of the elements from the original array and keeping the rest in their relative order.    
+Given an input array of comparable elements, we aim to find either a longest increasing subsequence or its length using parametrised space.
+It is well known that this problem can be solved in $\mathcal{O}(n \log n)$ time without memory constraints. 
+In~\cite{kiyomi2017space}, the authors presented a space-parametrised \Psort\ algorithm. Given a constraint $s$ on the number of words allowed in the working memory (where $\sqrt{n} \leq s \leq n$),
+their algorithm computes the length of a LIS in $\mathcal{O}(\frac{n^2}{s} \log n)$ time. They also presented an algorithm for recovering a LIS in $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ time. 
+In this paper, we present an improved analysis of the space-parametrised \Psort\ algorithm introduced in~\cite{kiyomi2017space}.
+We show that the length computation runs in $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time.
+We also present an improved divide-and-conquer algorithm for recovering the sequence, which runs in $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ time while using $\mathcal{O}(s)$ words in the working memory.
 }
 \author         {Mikołaj Owczarz}
 \advisor        {dr Karol Pokorski}
@@ -172,67 +179,67 @@ We also present an improved divide-and-conquer algorithm for obtaining the seque
 \section{Introduction[EN]}
 
 The longest increasing subsequence (LIS for short) problem is a classic algorithmic problem. 
-The input is a sequence of $n$ numbers $A = (a_1, a_2, \dots, a_n)$, and our goal is either to find the length of the LIS -- 
+The input is a sequence of $n$ numbers $A = (a_1, a_2, \dots, a_n)$, and our goal is either to find the length of a LIS -- 
 the largest integer $k$ for which there exist indices $i_1 < i_2 < \dots < i_k$ such that $a_{i_1} < a_{i_2} < \dots < a_{i_k}$, or to extract such subsequence.
 
 \subsection{Previous results}
-Efficient algorithms for finding the LIS are well known, for example, the \Psort\ algorithm devised by Mallows \cite{mallows}, which runs in $\mathcal{O}(n \log n)$ time for a sequence of length $n$ while using $\mathcal{O}(n)$ words of working space.
+Efficient algorithms for finding a LIS are well known, for example, the \Psort\ algorithm devised by Mallows \cite{mallows}, which runs in $\mathcal{O}(n \log n)$ time for a sequence of length $n$ while using $\mathcal{O}(n)$ words of working space.
 Given a sequence of $n$ elements, \Psort\ assigns each element to a \textit{pile}, where each pile contains information about the longest increasing subsequence of the input that ends in that element. 
-While the \Psort\ algorithm achieves the lower bound in terms of time complexity for finding the LIS \cite{lis-lb}, the question of how little memory one needs to efficiently solve the problem remains unanswered. 
-A variation of \Psort\ is presented in \cite{kiyomi2017space}, which, for a given memory parameter $s$, can find the length of the LIS in $\mathcal{O}(\frac{n^2}{s} \log n)$ time and compute the actual subsequence in $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ time, but only for $\sqrt{n} \leq s$.
+While the \Psort\ algorithm achieves the lower bound in terms of time complexity for finding a LIS \cite{lis-lb}, the question of how little memory one needs to efficiently solve the problem remains unanswered. 
+A variation of \Psort\ is presented in \cite{kiyomi2017space}, which, for a given memory parameter $s$, can find the length of a LIS in $\mathcal{O}(\frac{n^2}{s} \log n)$ time and compute the actual subsequence in $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ time, but only for $\sqrt{n} \leq s$.
 
 \subsection{Our contribution}
-In this paper, we improve the bounds achieved in \cite{kiyomi2017space}. For finding the length of the LIS, we conduct a tighter time analysis, showing that the algorithm proposed in \cite{kiyomi2017space} actually runs in $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time,
+In this paper, we improve the bounds achieved in \cite{kiyomi2017space}. For finding the length of a LIS, we conduct a tighter time analysis, showing that the algorithm proposed in \cite{kiyomi2017space} actually runs in $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time,
 while maintaining the $\mathcal{O}(s)$ bound for the number of words in the working memory. 
 Next, we observe that an alternative, simpler divide-and-conquer algorithm can be derived, which is more efficient than the one provided in \cite{kiyomi2017space}.
-Combined with the tighter analysis for the LIS length computation, it runs in $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ time.
+Combined with the tighter analysis for a LIS length computation, it runs in $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ time.
 
 \subsection{Related work}
-The LIS problem, in addition to its classic setting, has many heavily-researched variations.
+a LIS problem, in addition to its classic setting, has many heavily-researched variations.
 For example, we could ask for the longest increasing subsequence only on some part of the input by making range queries \cite{range-lis}.
-We can also ask to maintain the LIS in a dynamic setting \cite{dynamic-lis, dynamic-lis-lb}. Another interesting question is 
-the approximation of the LIS in any of these settings \cite{approx-lis, approx-lcs}. 
+We can also ask to maintain a LIS in a dynamic setting \cite{dynamic-lis, dynamic-lis-lb}. Another interesting question is 
+the approximation of a LIS in any of these settings \cite{approx-lis, approx-lcs}. 
 
 \subsection{Applications}
-As one of the most classic algorithmic problems, the LIS problem has a variety of applications across diverse scientific domains.
-In bioinformatics, the LIS is a fundamental tool for genome rearrangement analysis and sequence alignment, where it is often used to find maximum weight traces or to solve the Longest Common Subsequence (LCS) problem for some special cases \cite{delcher1999alignment}. 
-It also plays a crucial role in statistical physics and probability theory; notably, the distribution of the length of the LIS in random permutations is a central topic in the study of random matrices and the Tracy-Widom distribution \cite{baik1999distribution}. 
+As one of the most classic algorithmic problems, a LIS problem has a variety of applications across diverse scientific domains.
+In bioinformatics, a LIS is a fundamental tool for genome rearrangement analysis and sequence alignment, where it is often used to find maximum weight traces or to solve the Longest Common Subsequence (LCS) problem for some special cases \cite{delcher1999alignment}. 
+It also plays a crucial role in statistical physics and probability theory; notably, the distribution of the length of a LIS in random permutations is a central topic in the study of random matrices and the Tracy-Widom distribution \cite{baik1999distribution}. 
 Additionally, LIS algorithms are used in data analysis for identifying trends in time-series data and in version control systems for sequence differencing, for example in the well-known \texttt{diff} command.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Introduction[PL]}
+% \section{Introduction[PL]}
 
-Problem najdłuższego podciągu rosnącego (w skrócie LIS, od ang. \textit{longest increasing subsequence}) jest klasycznym problemem algorytmicznym. 
-Dla danych wejściowych -- sekwencji $n$ liczb $A = (a_1, a_2, \dots, a_n)$ naszym celem jest znalezienie długości LIS -– 
-największej liczby całkowitej $k$, dla której istnieją indeksy $i_1 < i_2 < \dots < i_k$ takie, że $a_{i_1} < a_{i_2} < \dots < a_{i_k}$, lub wyznaczenie takiego podciągu.
+% Problem najdłuższego podciągu rosnącego (w skrócie LIS, od ang. \textit{longest increasing subsequence}) jest klasycznym problemem algorytmicznym. 
+% Dla danych wejściowych -- sekwencji $n$ liczb $A = (a_1, a_2, \dots, a_n)$ naszym celem jest znalezienie długości LIS -– 
+% największej liczby całkowitej $k$, dla której istnieją indeksy $i_1 < i_2 < \dots < i_k$ takie, że $a_{i_1} < a_{i_2} < \dots < a_{i_k}$, lub wyznaczenie takiego podciągu.
 
-\subsection{Dotychczasowe wyniki}
-Wydajne algorytmy znajdowania LIS są dobrze znane.
-Przykładem jest algorytm \Psort\ opracowany przez Mallowsa \cite{mallows}, który działa w czasie $\mathcal{O}(n \log n)$ dla ciągu o długości $n$, wykorzystując przy tym $\mathcal{O}(n)$ słów pamięci roboczej.
-Mając dany ciąg $n$ elementów, algorytm \Psort\ przypisuje każdy element do pewnego \textit{stosu} (\textit{pile}), gdzie każdy stos zawiera informacje o najdłuższym rosnącym podciągu wejścia, który kończy się tym elementem. 
-Chociaż algorytm \Psort\ osiąga dolną granicę złożoności czasowej dla problemu znajdowania LIS \cite{lis-lb}, pytanie o to, jak mało pamięci potrzeba do jego wydajnego rozwiązania, pozostaje bez odpowiedzi. 
-W pracy \cite{kiyomi2017space} zaprezentowano wariant algorytmu \Psort, który dla zadanego parametru pamięci $s$ potrafi znaleźć długość LIS w czasie $\mathcal{O}(\frac{n^2}{s} \log n)$ oraz wyznaczyć sam podciąg w czasie $\mathcal{O}(\frac{n^2}{s} \log^2 n)$, jednakże z dodatkowym warunkiem -- $\sqrt{n} \leq s$.
+% \subsection{Dotychczasowe wyniki}
+% Wydajne algorytmy znajdowania LIS są dobrze znane.
+% Przykładem jest algorytm \Psort\ opracowany przez Mallowsa \cite{mallows}, który działa w czasie $\mathcal{O}(n \log n)$ dla ciągu o długości $n$, wykorzystując przy tym $\mathcal{O}(n)$ słów pamięci roboczej.
+% Mając dany ciąg $n$ elementów, algorytm \Psort\ przypisuje każdy element do pewnego \textit{stosu} (\textit{pile}), gdzie każdy stos zawiera informacje o najdłuższym rosnącym podciągu wejścia, który kończy się tym elementem. 
+% Chociaż algorytm \Psort\ osiąga dolną granicę złożoności czasowej dla problemu znajdowania LIS \cite{lis-lb}, pytanie o to, jak mało pamięci potrzeba do jego wydajnego rozwiązania, pozostaje bez odpowiedzi. 
+% W pracy \cite{kiyomi2017space} zaprezentowano wariant algorytmu \Psort, który dla zadanego parametru pamięci $s$ potrafi znaleźć długość LIS w czasie $\mathcal{O}(\frac{n^2}{s} \log n)$ oraz wyznaczyć sam podciąg w czasie $\mathcal{O}(\frac{n^2}{s} \log^2 n)$, jednakże z dodatkowym warunkiem -- $\sqrt{n} \leq s$.
 
-\subsection{Nasz wkład}
-W niniejszej pracy poprawiamy ograniczenia uzyskane w \cite{kiyomi2017space}.
-W przypadku obliczania długości LIS przeprowadzamy ściślejszą analizę czasową, pokazując, że algorytm zaproponowany w \cite{kiyomi2017space} w rzeczywistości działa w czasie $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$,
-zachowując jednocześnie ograniczenie $\mathcal{O}(s)$ na liczbę słów w pamięci roboczej. 
-Następnie zauważamy, że można wyprowadzić alternatywny, prostszy algorytm typu „dziel i rządź”, który jest wydajniejszy niż ten przedstawiony w \cite{kiyomi2017space}
-i w połączeniu ze ściślejszą analizą obliczania długości LIS, działa on w czasie $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$.
+% \subsection{Nasz wkład}
+% W niniejszej pracy poprawiamy ograniczenia uzyskane w \cite{kiyomi2017space}.
+% W przypadku obliczania długości LIS przeprowadzamy ściślejszą analizę czasową, pokazując, że algorytm zaproponowany w \cite{kiyomi2017space} w rzeczywistości działa w czasie $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$,
+% zachowując jednocześnie ograniczenie $\mathcal{O}(s)$ na liczbę słów w pamięci roboczej. 
+% Następnie zauważamy, że można wyprowadzić alternatywny, prostszy algorytm typu „dziel i rządź”, który jest wydajniejszy niż ten przedstawiony w \cite{kiyomi2017space}
+% i w połączeniu ze ściślejszą analizą obliczania długości LIS, działa on w czasie $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$.
 
-\subsection{Prace powiązane}
-Problem LIS, oprócz swojego klasycznego sformułowania, posiada wiele intensywnie badanych wariantów.
-Na przykład, możemy szukać najdłuższego podciągu rosnącego tylko na pewnej części wejścia, wykonując zapytania na spójnych przedziałach ciągu wejściowego \cite{range-lis}.
-Możemy również rozważać dynamiczne utrzymanie LIS \cite{dynamic-lis, dynamic-lis-lb}. Innym interesującym zagadnieniem jest 
-aproksymacja LIS w dowolnym z tych wariantów \cite{approx-lis, approx-lcs}.
+% \subsection{Prace powiązane}
+% Problem LIS, oprócz swojego klasycznego sformułowania, posiada wiele intensywnie badanych wariantów.
+% Na przykład, możemy szukać najdłuższego podciągu rosnącego tylko na pewnej części wejścia, wykonując zapytania na spójnych przedziałach ciągu wejściowego \cite{range-lis}.
+% Możemy również rozważać dynamiczne utrzymanie LIS \cite{dynamic-lis, dynamic-lis-lb}. Innym interesującym zagadnieniem jest 
+% aproksymacja LIS w dowolnym z tych wariantów \cite{approx-lis, approx-lcs}.
 
-\subsection{Zastosowania}
-Jako jeden z najbardziej klasycznych problemów algorytmicznych, problem LIS znajduje szereg zastosowań w różnych dziedzinach nauki.
-W bioinformatyce LIS jest podstawowym narzędziem do analizy rearanżacji genomów oraz dopasowywania sekwencji (ang. \textit{sequence alignment}), gdzie często służy do znajdowania ścieżek o maksymalnej wadze (ang. \textit{maximum weight traces}) lub do rozwiązywania problemu najdłuższego wspólnego podciągu (LCS) dla pewnych szczególnych przypadków \cite{delcher1999alignment}. 
-Odgrywa również kluczową rolę w fizyce statystycznej i teorii prawdopodobieństwa; w szczególności rozkład długości LIS w losowych permutacjach jest głównym tematem badań nad macierzami losowymi i rozkładem Tracy'ego-Widoma \cite{baik1999distribution}. 
-Ponadto algorytmy LIS są wykorzystywane w analizie danych do identyfikacji trendów w szeregach czasowych, a także w systemach kontroli wersji do wyszukiwania różnic w sekwencjach, czego przykładem jest dobrze znane polecenie \texttt{diff}.
+% \subsection{Zastosowania}
+% Jako jeden z najbardziej klasycznych problemów algorytmicznych, problem LIS znajduje szereg zastosowań w różnych dziedzinach nauki.
+% W bioinformatyce LIS jest podstawowym narzędziem do analizy rearanżacji genomów oraz dopasowywania sekwencji (ang. \textit{sequence alignment}), gdzie często służy do znajdowania ścieżek o maksymalnej wadze (ang. \textit{maximum weight traces}) lub do rozwiązywania problemu najdłuższego wspólnego podciągu (LCS) dla pewnych szczególnych przypadków \cite{delcher1999alignment}. 
+% Odgrywa również kluczową rolę w fizyce statystycznej i teorii prawdopodobieństwa; w szczególności rozkład długości LIS w losowych permutacjach jest głównym tematem badań nad macierzami losowymi i rozkładem Tracy'ego-Widoma \cite{baik1999distribution}. 
+% Ponadto algorytmy LIS są wykorzystywane w analizie danych do identyfikacji trendów w szeregach czasowych, a także w systemach kontroli wersji do wyszukiwania różnic w sekwencjach, czego przykładem jest dobrze znane polecenie \texttt{diff}.
 
 \section{Preliminaries}
 
@@ -249,12 +256,12 @@ We define two variants of the Longest Increasing Subsequence problem.
 {$k$ -- the largest integer such that there exist an increasing subsequence in $A$ of length $k$}
 
 
-We use the RAM model, where the input sequence is read-only, and the working memory is limited to $\mathcal{O}(s)$ words.
+We use the RAM model, where the input sequence is read-only, and the working memory is limited to $\mathcal{O}(s)$ words of $\mathcal{O}(\log n)$ bits.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Patience Sorting}
+\subsection{\Psort}
 
 Our algorithm is based on the classic \Psort. Let us define basic notions used throughout the algorithm. The idea of the algorithm is to maintain \textit{piles} -- stacks of integers such that for all $x \in A$, $x$ belongs to the $i$-th pile if and only if the \textit{longest increasing subsequence} of $A$ ending in $x$ has length $i$.
 Since both classic and space-parametrised variants of the \Psort\ algorithm are based on sequential passes through the input array, we define
@@ -322,12 +329,12 @@ Suppose we are reading $a_t$, and $a_t \in P_j$. Let $i$ be a fixed integer. \\
 If $j \neq i$, then:
 \begin{itemize}
 \item $a_t < \operatorname{top}(P_i^{t-1})$ if $j < i$
-\item $a_t > \operatorname{top}(P_i^{t-1})$ if $j > i$
+\item $a_t > \operatorname{top}(P_i^{t-1})$ otherwise
 \end{itemize} 
 \end{observation}
 
 Recall that in the \Psort\ algorithm, for an element $a_t$, to determine to which pile it belongs, it suffices to know only the values of the top elements of the piles at step $t-1$. 
-Moreover, by Observation~\ref{obs:filtering}, if we want to check whether this index -- call it $k$, belongs to a specific interval---in our case, whether $i \leq k \leq i + 2s$---it suffices to know only the top elements of the piles whose indices are also in this interval.
+Moreover, by Observation~\ref{obs:filtering}, if we want to check whether this index -- call it $k$, belongs to a specific interval -- in our case, whether $i \leq k \leq i + 2s$---it suffices to know only the top elements of the piles whose indices are also in this interval.
 Below, we define the \textit{filtering} method for the \Ppass\ procedure.
 Suppose we are processing $a_t$. We can encounter one of the following three cases: 
 \begin{enumerate}
@@ -342,11 +349,11 @@ Let $r := \operatorname{top}(P_{i + 2s}^{t-1})$. Then:
 \end{enumerate}
 Observe that if the first case is false, then $\operatorname{top}(P_i^{t-1}) = \operatorname{top}(P_i^{t})$; thus, exactly one of these cases holds.
 
-Notice that if we have the whole $P_i$ in memory, we can process the first two cases in constant time by maintaining a pointer to the most recently read element $h = \operatorname{top}(P_i^{t-1})$ in $P_i$.
+Notice that if we have the whole $P_i$ in memory, we can process the first two cases in constant time by maintaining a pointer to the most recently read element $h := \operatorname{top}(P_i^{t-1})$ in $P_i$.
 In the first case, we compare $a_t$ to the element in $P_i$ that is after $h$. We can determine whether we are in the second or third case by comparing $a_t$ and $h$.
 
 It is easy to see that if we maintain $\operatorname{top}(P_k^{t-1})$ for all $i < k \leq i + 2s$, then we can distinguish cases 3(a) and 3(b) in constant time and find the value of $k$ in 3(b) in $\mathcal{O}(\log s)$ time.
-We will call the search in 3(b) an \textit{expensive filter}. Below, we present the \Ppass\ implementation (Algorithm 3 in \cite{kiyomi2017space}).
+We call the search in 3(b) an \textit{expensive filter}. Below, we present the \Ppass\ implementation (Algorithm 3 in \cite{kiyomi2017space}).
 
 \begin{algorithm}
     \caption{First pass in \Ppass, assume $P_i$ is given, and $|P_i| < s$}
@@ -374,12 +381,11 @@ We will call the search in 3(b) an \textit{expensive filter}. Below, we present 
     \EndFor
     
     \State set $j$ to be the biggest, such that $0 < c_j \leq s$
-    
-    \Return $j$
+    \State \Return $j$
     \end{algorithmic}
 \end{algorithm}
 
-After this pass, if $r < i + 2s$, we can conclude that $r$ is the length of the \Lis, since no element belongs to a pile with a larger index.
+After this pass, if $r < i + 2s$, we can conclude that $r$ is the length of a \Lis, since no element belongs to a pile with a larger index.
 Then, we can set $j := r$ and return $j$ as the \LisLen, along with $p_j = \operatorname{top}(P_j)$. 
 It is easy to see how to modify the procedure to compute the whole $P_j$ if $j$ is given: we can maintain an additional stack and push the elements that belong to the $j$-th pile onto it.
 
@@ -433,7 +439,8 @@ The total number of expensive filter operations is linear, i.e.,
 \begin{proof}
 For each pass $i \in \{1, \dots, K\}$, let us define the active interval $I_i = (j_{i-1}, j_{i-1}+2s]$.
 
-Fix a pass $i$. During the first phase of this pass, the \textit{expensive filter} is invoked only for elements whose pile index belongs to $I_i$. Once the new boundary $j_i$ is determined, the second phase invokes the \textit{expensive filter} only if the pile index is in $(j_{i-1}, j_i]$. 
+Fix a pass $i$. During the first phase of this pass, the \textit{expensive filter} can only be invoked only for some elements whose pile index belongs to $I_i$.
+Once the new boundary $j_i$ is determined, the second phase can invoke the \textit{expensive filter} only if the pile index is in $(j_{i-1}, j_i]$. 
 By \Ppass\ construction, we know that $j_i \leq j_{i-1} + 2s$, which means $(j_{i-1}, j_i] \subseteq I_i$. Thus, we can see that:
 \[
 W_i \le \sum_{k \in I_i} |P_k| + \sum_{k=j_{i-1}+1}^{j_i} |P_k| \leq 2\sum_{k \in I_i} |P_k|.
@@ -445,7 +452,7 @@ This gives us:
 
 By \Ppass\ construction (Observation~\ref{obs:ppass-advance}) we have $j_i \ge j_{i-1}+s$  or $j_i$ is the length of \Lis.
 This implies that the left endpoints of the intervals $I_i$ advance by at least $s$ for all but the last pass.
-Observe that when not counting the last pass each interval $I_i$ has a width of exactly $2s$, any pile index $k$ can belong to at most two intervals $I$.
+Observe that (when not counting the last pass) each interval $I_i$ has a width of exactly $2s$, any pile index $k$ can belong to at most two intervals $I$.
 Therefore, summing the pile sizes over all intervals yields at most twice the total number of elements:
 \[
 \sum_{i=1}^{K-1} \sum_{k \in I_i} |P_k| + \sum_{k \in I_K} |P_k| \le 2\sum_{k=1}^n |P_k| + \sum_{k=1}^n |P_k|  = 3n.
@@ -457,7 +464,7 @@ Because after each \Ppass\ we advance at least by $s$ piles and the largest poss
 \[
 T(n,s) \leq cn \frac{n}{s} + c'n\log s
 \]
-For some constants $c, c'$. It is easy to see that $T(n, s) \in \mathcal{O}(\max(n\log n, \frac{n^2}{s}))$ as desired.
+for some constants $c, c'$. It is easy to see that $T(n, s) \in \mathcal{O}(\max(n\log n, \frac{n^2}{s}))$ as desired.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -466,11 +473,15 @@ For some constants $c, c'$. It is easy to see that $T(n, s) \in \mathcal{O}(\max
 To compute the \Lis, we present an alternative divide-and-conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ time. This improves on the earlier $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ result.
 
 \begin{definition}
-For $x \in A$ let $\textsc{Lis}_x$ be the \textit{longest increasing subsequence} of $A$ ending in $x$.
+For $x \in A$ let $\textsc{Lis}_x$ be any one of the \textit{longest increasing subsequence} of $A$ ending in $x$.
 \end{definition}
 
 \begin{definition}
 For an integer $x$ and sequence of numbers $A$, let $A_{\leq x}$ be the subsequence of $A$ consisting of elements that are equal of smaller than $x$. Analogously we define $A_{>x}$.
+\end{definition}
+
+\begin{definition}
+Then, we define:
 \begin{itemize}
 \item $L_{\leq x}$ is a \Lis\ for $A_{\leq x}$.
 \item $L_{>x}$ is a \Lis\ for $A_{>x}$.
@@ -483,57 +494,59 @@ Having such element would allow us to recursively solve \Lis\ for $A_\ell$ and $
 
 \begin{definition}
 For $x \in A$, let $\operatorname{pred}(x) \in A_\ell$ be such that there is a $\textsc{Lis}_x$ in $A$
-such that the last element of it belonging to $A_\ell$ is pred$(x)$, or null if the length of $\textsc{Lis}_x$ is 1 and $x \notin A_\ell$.
+such that its last element belonging to $A_\ell$ is pred$(x)$, or null if the length of $\textsc{Lis}_x$ is 1 and $x \notin A_\ell$.
 \end{definition}
 
 \begin{claim} Let $a_t \in P_i$, then \\
 pred$(a_t) = \begin{cases}
 a_t & \text{if } a_t \in A_\ell \\
 \text{null} & \text{if } a_t \in A_r \land i = 1 \\
-\text{pred}(y) & \text{where } y = \operatorname{top}(P_{i-1}^{t-1})
+\operatorname{pred}(\operatorname{top}(P_{i-1}^{t-1})) & \text{if } a_t \in A_r \land i > 1
 \end{cases}$
 \end{claim}
 
 \begin{proof}
 Case when $a_t \in A_\ell$ is trivial. Assume $a_t \in A_r$. Now, if $a_t \in P_1$, then the $\textsc{Lis}_{a_t}$ is of
 length $1$, thus by definition $\operatorname{pred}(a_t) = \text{null}$. Now, assume that $a_t \in A_r \land a_t \in P_i \land i > 1$. Then  
-$\textsc{Lis}_{a_t}$ is of length $i$. Since $y = \text{top}(P_{i-1}^{t-1})$ is smaller than $a_t$ (by Observation~\ref{obs:filtering}), and $a_t$ is later in $A$ than $y$, if we append $a_t$ to $\textsc{Lis}_y$ it is still a valid $increasing\ subsequence$.
+$\textsc{Lis}_{a_t}$ is of length $i$. Since $y := \text{top}(P_{i-1}^{t-1})$ is smaller than $a_t$ (by Observation~\ref{obs:filtering}), and $a_t$ is later in $A$ than $y$, if we append $a_t$ to $\textsc{Lis}_y$ it is still a valid $increasing\ subsequence$.
 Notice that since length of $\textsc{Lis}_y$ is $i-1$, by appending $a_t$ to it we obtain $\textsc{Lis}_{a_t}$. Since $a_t \in A_r$ the last element belonging to $A_\ell$ in $\textsc{Lis}_{a_t}$ is the same one that in $\textsc{Lis}_y$ making $\operatorname{pred}(a_t) = \operatorname{pred}(y)$.  
 \end{proof}
 
 \begin{observation}
 Let $a \in A$ be an element that belongs to the last pile. 
-Then, for $m = \operatorname{pred}(a)$ concatenation of $L_{\leq m}$ for $A_\ell$ and $L_{> m}$ for $A_r$ is a \Lis.
+Then, for $m := \operatorname{pred}(a)$ concatenation of $L_{\leq m}$ for $A_\ell$ and $L_{> m}$ for $A_r$ is a \Lis of $A$.
 \end{observation}
 
 \begin{proof}
 This follows directly from the definition of $\operatorname{pred}$. Let us choose an element $a$ from the last pile. 
 Consider a $\textsc{Lis}_a$ where $m$ is the last element from $A_\ell$ belonging to this sequence.
-Since $a$ is located in the last pile, $\textsc{Lis}_a$ is a \Lis.
+Since $a$ is located in the last pile, $\textsc{Lis}_a$ is a \Lis of $A$.
 Because $\textsc{Lis}_a$ is an increasing sequence and $m$ is in it, there exist increasing subsequences $L_1 \text{ and } L_2$, such that $\textsc{Lis}_a$ is their concatenation and $m$ is the last element of $L_1$.
 It immediately follows that each element of $L_1$ is less than or equal to $m$ and each element of $L_2$ is greater than $m$.
 Since $m \in A_\ell$, $L_1$ is a subsequence of $A_\ell$. Because $m$ is the last element from $A_\ell$ in $\textsc{Lis}_a$, $L_2$ is a subsequence of $A_r$.
-Therefore, since $\textsc{Lis}_a$ is a \Lis, $L_1$ is $L_{\leq m}$ and $L_2$ is $L_{> m}$.
+Therefore, since $\textsc{Lis}_a$ is a \Lis of $A$, $L_1$ is $L_{\leq m}$ and $L_2$ is $L_{> m}$.
 \end{proof}
 
-It can be easily seen how to modify the \Ppass\ procedure and store the pred of an element using only $\mathcal{O}(n)$ time per \Ppass.
-We can also see that to compute pred for any element that is not filtered out during a \Ppass\ we can use pred values 
-and memoising the additional value only for the $\mathcal{O}(s)$ elements that we already store in memory, thus keeping both time and memory complexity with respect to big-$\mathcal{O}$ notation.
-We deduce that the previously mentioned element $m$ can be $\operatorname{pred}(x)$ for any $x$ in the last pile and since computing pred values does not change the time and memory complexity of the \Ppass\ 
+It is easy to see how to modify \Ppass\ procedure and store the pred of an element using only $\mathcal{O}(n)$ time per \Ppass.
+We can also see that to compute pred for any element that is not filtered out during a \Ppass, we can use pred values 
+and storing the additional value only for the $\mathcal{O}(s)$ elements that we already store in memory, thus keeping both time and memory complexity with respect to big-$\mathcal{O}$ notation.
+We deduce that $m$ is $\operatorname{pred}(x)$ for some $x$ in the last pile and since computing pred values does not change the time and memory complexity of the \Ppass\ 
 
-\begin{observation}The time complexity for solving the \Lis\ can be written as:
+\begin{observation}The time complexity for solving the \Lis\ is:
 $$T(n, s) = \begin{cases}
 c'n \log n \text{ if } n \leq s \\
 2T(\frac{n}{2}, s) + c\operatorname{max}(n \log n, \frac{n^2}{s}) \text{ otherwise}
 \end{cases}$$
-For some constants $c, c'$, which is $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$.
+For some constants $c, c'$. This is $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$.
 \end{observation}
-This is because we can find the element $m$ during a single \Ppass\ which runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time and then solve on two halves of the input independently.
+\begin{proof}
+This is because we find the element $m$ during a single \Ppass\ which runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time and then solve on two halves of the input independently.
 
-To justify the complexity bound suppose that we claim $T(n, s) = 2T(\frac{n}{2}, s) + c_1n \log n + c_2\frac{n^2}{s}$ when $n > s$ for some constants $c_1, c_2$.
+To justify the complexity bound, suppose that we claim $T(n, s) = 2T(\frac{n}{2}, s) + c_1n \log n + c_2\frac{n^2}{s}$ when $n > s$ for some constants $c_1, c_2$.
 Notice that $n \log n$ dominates over $\frac{n^2}{s}$ when $s > \frac{n}{\log n}$, and there are at most $\log \log n$ such levels until the base case $n \leq s$ is reached, contributing at most $\mathcal{O}(n \log n \log \log n)$ to the total work.
 Otherwise, when $\frac{n^2}{s}$ dominates, the recursion yields $\mathcal{O}(\frac{n^2}{s})$. 
 Therefore, the final time complexity is $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$.
+\end{proof}
 
 Below we provide the algorithm for computing \Lis\ in pseudocode.
 First we define a slightly modified version of \Ppass\ that will allow us to compute $L_{\leq x}$ and $L_{> x}$ for some $x$ by ignoring elements bigger than $x$ or elements smaller than or equal to $x$ respectively.
@@ -619,7 +632,7 @@ Initially we call the procedure with values $lb, ub$ set to $-\infty$ and $\inft
         \If{$m = null$} \Comment{\textcolor{gray}{The \Lis\ does not contain any elements from $A_\ell$}}
             \State \Return $\Lis(A_r, s, lb, ub)$
         \Else \Comment{\textcolor{gray}{Recursively solve for both halves using $m$ as a bound}}
-            \State \Return $\Lis(A_\ell, s, lb, m) \parallel \Lis(A_r, s, m, ub)$ \Comment{\textcolor{gray}{$\parallel$ is concatenation}}
+            \State \Return $\Lis(A_\ell, s, lb, m) + \Lis(A_r, s, m, ub)$ \Comment{\textcolor{gray}{$+$ is concatenation}}
         \EndIf
     \end{algorithmic}
 \end{algorithm}
