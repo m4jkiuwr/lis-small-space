@@ -54,9 +54,9 @@ pair<int, optional<int>> LisLen(span<const int> A, int s, int lb, int ub) {
     return {total_len, nullopt};
 }
 
-void Lis(span<const int> A, int s, int lb, int ub, vector<int>& output) {
+void Lis(span<const int> A, size_t s, int lb, int ub, vector<int>& output) {
     if (A.empty()) return;
-    if (A.size() <= static_cast<size_t>(s)) {
+    if (A.size() <= s) {
         classicLIS(A, lb, ub, output);
         return;
     }
