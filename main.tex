@@ -267,7 +267,9 @@ We use the RAM model, where the input sequence is read-only, and the working mem
 
 \subsection{\Psort}
 
-Our algorithm is based on the classic \Psort. Let us define basic notions used throughout the algorithm. The idea of the algorithm is to maintain \textit{piles} -- stacks of integers such that for all $x \in A$, $x$ belongs to the $i$-th pile if and only if the \textit{longest increasing subsequence} of $A$ ending in $x$ has length $i$.
+Our algorithm is based on the classic \Psort. Let us define basic notions used throughout the algorithm.
+The idea of the algorithm is to maintain \textit{piles} -- stacks of integers such that for all $x \in A$, $x$ belongs to the $i$-th pile if and only if the \textit{longest increasing subsequence} of $A$ ending in $x$ has length $i$.
+By this definition we can see that each element $x$ belongs to exactly one pile.
 Since both classic and space-parametrised variants of the \Psort\ algorithm are based on sequential passes through the input array, we define
 pile operations with respect to the time when they are being used.
 
@@ -283,10 +285,10 @@ Let $P$ be some state of the pile (for example $P_3^4$ or $P_2$), then:
 \end{itemize}
 
 It follows from the pile definition that if we are solving the \LisLen\ problem, then our goal is to compute the largest integer $k$ such that $P_k$ is non-empty.
-The classic \Psort\ algorithm achieves that by constructing all piles during a single pass through the input sequence. When reading the $t$-th element of $A$ -- $a_t$, we find
+The classic \Psort\ algorithm achieves that by constructing all piles during a single pass through the input sequence. When reading the $t$-th element of $A$, $a_t$, we find
 the smallest $i$ such that $\operatorname{top}(P_i^{t-1}) \geq a_t$ and we push $a_t$ to the top of the $i$-th pile, or we create a new, rightmost pile with a single element $a_t$.
-By definition, each element belongs to exactly one pile. Thus, for every $t$, if $a_t$ is in the $i$-th pile then $P_i^t$ is $P_i^{t-1}$ with $a_t$ pushed onto it, and $P_j^t = P_j^{t-1}$ for all $j \neq i$.
-Since copying and storing the pile states at every step would introduce time and memory issues, and the state transitions are straightforward, we can naturally construct the piles on the fly while iterating through $A$.
+Since each element belongs to exactly one pile, for every $t$, if $a_t$ is in the $i$-th pile then $P_i^t$ is $P_i^{t-1}$ with $a_t$ pushed onto it, and $P_j^t = P_j^{t-1}$ for all $j \neq i$.
+Since copying and storing the pile states at every step would introduce time and memory issues, and the state transitions are straightforward, we only maintain their current state (in the moment $t$ after reading $a_t$).
 Thus, we omit the upper indices in the implementation of \Psort\ algorithm below.
 
 \begin{algorithm}
@@ -320,7 +322,7 @@ Element $a_t \in P_i$ if and only if a \textit{longest increasing subsequence} o
 \subsection{Space-parametrised Patience Sorting}
 Now we define the space-parametrised variant of \Psort\ that originates from \cite{kiyomi2017space}.
 
-Assume that our working memory is limited to $\mathcal{O}(s)$ words, and $\sqrt{n} \leq s \leq n$.
+Assume that our working memory is limited to $s'$ words. Let $s := \frac{s'}{4}$ and assume that $\sqrt{n} \leq s \leq n$.
 Similarly to the classic \Psort\ we will process the input array sequentially while maintaining piles. However, since our memory is limited and we cannot afford
 to keep all piles in the memory, we will pass through the input multiple times. Each time we will store only one, chosen pile and top elements of some other piles. The idea is clearly presented in \cite{kiyomi2017space} (Lemma 4.2, Lemma 4.3).
 
@@ -464,7 +466,11 @@ Therefore, summing the pile sizes over all intervals yields at most twice the to
 Thus, we get $\sum_{i=1}^K W_i \le 6n \in \mathcal{O}(n)$.
 \end{proof}
 
-Because after each \Ppass\ we advance at least by $s$ piles and the largest possible pile index is $n$, $K \in \mathcal{O}(\frac{n}{s})$, which gives us the total running time:
+Observe that $K \leq \frac{n}{s}$. 
+This is because after each \Ppass\ the index of the computed pile increases by at least $s$, and
+% This is because after each \Ppass\ we compute a pile with an index at least $s$ larger than that of the previous one. 
+the algorithm terminates when it reaches a pile equal to the length of a LIS which is at most $n$.
+Thus, the total time complexity is:
 \[
 T(n,s) \leq cn \frac{n}{s} + c'n\log s
 \]
@@ -494,7 +500,8 @@ Then, we define:
 
 Let $A_{\ell}$ and $A_r$ be the left and right halves of $A$ respectively. Our goal is to efficiently find an element $m$ such that
 concatenation of $L_{\leq m}$ for $A_\ell$ and $L_{> m}$ for $A_r$ is a \Lis\ for original input $A$. 
-Having such element would allow us to recursively solve \Lis\ for $A_\ell$ and $A_r$ independently. We will show that such element can be found during a single \LisLen\ computation without changing its time and memory complexity.
+Having such element would allow us to recursively solve \Lis\ for $A_\ell$ and $A_r$ independently.
+We will show that such element can be found during a single \LisLen\ computation without changing its time and memory complexity.
 
 \begin{definition}
 For $x \in A$, let $\operatorname{pred}(x) \in A_\ell$ be such that there is a $\textsc{Lis}_x$ in $A$
@@ -531,7 +538,7 @@ Since $m \in A_\ell$, $L_1$ is a subsequence of $A_\ell$. Because $m$ is the las
 Therefore, since $\textsc{Lis}_a$ is a \Lis of $A$, $L_1$ is $L_{\leq m}$ and $L_2$ is $L_{> m}$.
 \end{proof}
 
-It is easy to see how to modify \Ppass\ procedure and store the pred of an element using only $\mathcal{O}(n)$ time per \Ppass.
+It is easy to see how to modify the \Ppass\ procedure and store the pred of every element adding only $\mathcal{O}(n)$ time per \Ppass.
 We can also see that to compute pred for any element that is not filtered out during a \Ppass, we can use pred values 
 and storing the additional value only for the $\mathcal{O}(s)$ elements that we already store in memory, thus keeping both time and memory complexity with respect to big-$\mathcal{O}$ notation.
 We deduce that $m$ is $\operatorname{pred}(x)$ for some $x$ in the last pile and since computing pred values does not change the time and memory complexity of the \Ppass\ 
@@ -646,9 +653,20 @@ Initially we call the procedure with values $lb, ub$ set to $-\infty$ and $\inft
 
 
 \section{Algorithm performance results}
+We provide the implementation of described algorithm in a github repository\footnote{\url{https://github.com/m4jkiuwr/lis-small-space}}.
+
+\subsection{Implementation details}
+\subsubsection{\Ppass}
+\subsubsection{Procedure for finding the \LisLen}
+\subsubsection{Procedure for computing a \Lis}
+
+\subsection{Testing}
+
+\subsection{Performance}
+
 
 \section{Summary}
-
+\subsection{Open questions}
 
 
 
