@@ -653,21 +653,21 @@ Initially we call the procedure with values $lb, ub$ set to $-\infty$ and $\inft
 
 
 \section{Algorithm performance results}
-We provide the implementation of described algorithm in a github repository\footnote{\url{https://github.com/m4jkiuwr/lis-small-space}}.
+We provide the implementation of described algorithm in a github repository\footnote{\url{https://github.com/m4jkiuwr/lis-small-space}}. 
+The implementation is written in C++20. It uses some more modern C++ features like the \texttt{std::span} for efficient sub-array handling and \texttt{std::optional} for representing the \operatorname{pred} values.
 
 \subsection{Implementation details}
-\subsubsection{\Ppass}
-\subsubsection{Procedure for finding the \LisLen}
-\subsubsection{Procedure for computing a \Lis}
-
-\subsection{Testing}
-
-\subsection{Performance}
-
 
 \section{Summary}
-\subsection{Open questions}
+In this paper we revisited the space-parametrised variant of \Psort\ from~\cite{kiyomi2017space}.
+By bounding the total number of \textit{expensive filter} operations across all passes, we showed that computing \LisLen\ runs in
+$\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time for $\sqrt{n} \leq s \leq n$, improving the previously stated $\mathcal{O}(\frac{n^2}{s} \log n)$ bound.
+We then derived a simpler divide-and-conquer reconstruction strategy which, using the same \Ppass\ procedure, computes an actual \Lis\ in
+$\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ time while preserving the $\mathcal{O}(s)$ bound on the number of words in the working space.
+Finally, we implemented the algorithms in C++20 and benchmarked the implementation by measuring time and memory usage when running tests.
 
+\subsubsection{Open questions}
+A natural open question is whether there exists an exact algorithm for \LisLen\ and \Lis\ $o(\sqrt{n})$ words of working memory.
 
 
 
