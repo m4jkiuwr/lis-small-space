@@ -4,6 +4,8 @@
 #include <limits>
 #include <algorithm>
 #include <span>
+#include <cassert>
+#include <iostream>
 
 using namespace std;
 
@@ -27,21 +29,24 @@ int find_pile_index(span<const int> A, Iterator begin, Iterator end, int val) {
 void classicLIS(span<const int> A, int lb, int ub, vector<int>& output);
 
 // Compute the j for next ppass and indicates whether j is the lislen
-pair<int, bool> Ppass_first(span<const int> A, int s, const vector<Element>& P_i, int lb, int ub);
+pair<int, bool> Ppass_first(span<const int> A, size_t s, const vector<Element>& P_i, int lb, int ub);
 
 // Compute the P_j or top(P_j) if is_last_pile
 vector<Element> Ppass_second(span<const int> A, const vector<Element>& P_i, int j, bool is_last_pile, int lb, int ub);
 
 // Computes the LisLen and a pred of an element from the last pile
-pair<int, optional<int>> LisLen(span<const int> A, int s, int lb, int ub) {
+pair<int, optional<int>> LisLen(span<const int> A, size_t s, int lb, int ub) {
     if (A.empty()) return {0, nullopt};
 
     vector<Element> current_pile;
     int total_len = 0;
     
     while (true) {
+        assert(current_pile.size() <= s);
+
         auto [j, is_last] = Ppass_first(A, s, current_pile, lb, ub);
         current_pile = Ppass_second(A, current_pile, j, is_last, lb, ub);
+        
         total_len += j;
 
         if (is_last) {
@@ -60,6 +65,7 @@ void Lis(span<const int> A, size_t s, int lb, int ub, vector<int>& output) {
         classicLIS(A, lb, ub, output);
         return;
     }
+    assert(A.size() <= s * s);
     auto [k, m] = LisLen(A, s, lb, ub);
 
     size_t mid = A.size() / 2;
@@ -68,8 +74,9 @@ void Lis(span<const int> A, size_t s, int lb, int ub, vector<int>& output) {
         Lis(A.subspan(mid), s, lb, ub, output);
     } 
     else {
-        Lis(A.subspan(0, mid), s, lb, m.value(), output);        
-        Lis(A.subspan(mid), s, m.value(), ub, output);
+        int midpoint = m.value();
+        Lis(A.subspan(0, mid), s, lb, midpoint, output);        
+        Lis(A.subspan(mid), s, midpoint, ub, output);
     }
 }
 
@@ -104,7 +111,7 @@ void classicLIS(span<const int> A, int lb, int ub, vector<int>& output) {
     output.insert(output.end(), res.begin(), res.end());
 }
 
-pair<int, bool> Ppass_first(span<const int> A, int s, const vector<Element>& P_i, int lb, int ub) {
+pair<int, bool> Ppass_first(span<const int> A, size_t s, const vector<Element>& P_i, int lb, int ub) {
     int h = 0; 
     int r = 0; 
     vector<int> p(2*s + 1, -1);
@@ -112,34 +119,32 @@ pair<int, bool> Ppass_first(span<const int> A, int s, const vector<Element>& P_i
 
     for (int t = 0; t < (int)A.size(); ++t) {
         int a = A[t];
-        if (a <= lb || a > ub) continue;
 
-        if (h < (int)P_i.size() && t == P_i[h].index) {
+        if (a <= lb || a > ub) continue;
+        if(h < (int)P_i.size() && t == P_i[h].index){
             h++;
+            p[0] = t;
             continue;
         }
+        if (p[0] == -1 && !P_i.empty()) continue;
 
-        int p_min_val = (h > 0) ? A[P_i[h - 1].index] : lb;
-        int p_max_val = (r == 2*s) ? A[p[2*s]] : numeric_limits<int>::max();
+        int p_min_val = (p[0] == -1) ? -INF : A[p[0]];
+        int p_max_val = (p[2*s] == -1) ? INF : A[p[2*s]];
 
         if (a <= p_min_val || a > p_max_val) continue;
 
-        int top_r_val = (r == 0) ? p_min_val : A[p[r]];
-
+        int p_r = (p[r] == -1) ? -INF : A[p[r]];
         int k = 0;
-        if (r < 2*s && a > top_r_val) {
+        if (a > p_r) {
             r++;
             k = r;
         } else {
             k = find_pile_index(A, p.begin() + 1, p.begin() + r + 1, a) + 1;
         }
 
-        if (k >= 1 && k <= 2*s) {
-            p[k] = t; 
-            c[k]++;
-        }
+        p[k] = t; 
+        c[k]++;
     }
-    
     if (r < 2*s) {
         return {r, true};
     } else {
@@ -162,22 +167,23 @@ vector<Element> Ppass_second(span<const int> A, const vector<Element>& P_i, int 
 
     for (int t = 0; t < (int)A.size(); ++t) {
         int a = A[t];
-        if (a <= lb || a > ub) continue;
 
-        if (h < (int)P_i.size() && t == P_i[h].index) {
+        if (a <= lb || a > ub) continue;
+        if(h < (int)P_i.size() && t == P_i[h].index){
             h++;
+            p[0] = t;
             continue;
         }
+        if (p[0] == -1 && !P_i.empty()) continue;
 
-        int p_min_val = (h == 0) ? lb : A[P_i[h - 1].index];
-        if (a <= p_min_val) continue;
+        int p_min_val = (p[0] == -1) ? -INF : A[p[0]];
+        int p_max_val = (p[j] == -1) ? INF : A[p[j]];
 
-        if (r == j && a > A[p[r]]) continue;
-
-        int top_r_val = (r == 0) ? p_min_val : A[p[r]];
+        if (a <= p_min_val || a > p_max_val) continue;
 
         int k = 0;
-        if (r < j && a > top_r_val) {
+        int p_r = (p[r] == -1) ? -INF : A[p[r]];
+        if (a > p_r) {
             r++;
             k = r;
         } else {
@@ -187,10 +193,10 @@ vector<Element> Ppass_second(span<const int> A, const vector<Element>& P_i, int 
         if (k >= 1 && k <= j) {
             optional<int> current_pred;
             if (t < mid) {
-                current_pred = a;
+                current_pred = A[t];
             } else {
                 if (k == 1) {
-                    current_pred = (h == 0) ? nullopt : P_i[h - 1].pred;
+                    current_pred = (h == 0) ? nullopt : P_i[h-1].pred;
                 } else {
                     current_pred = p_pred[k - 1];
                 }
@@ -200,12 +206,8 @@ vector<Element> Ppass_second(span<const int> A, const vector<Element>& P_i, int 
             p_pred[k] = current_pred;
 
             if (k == j) {
-                if (is_last_pile) {
-                    if (P_target.empty()) P_target.push_back({t, current_pred});
-                    else P_target[0] = {t, current_pred};
-                } else {
                     P_target.push_back({t, current_pred});
-                }
+                    if(is_last_pile) break;
             }
         }
     }
