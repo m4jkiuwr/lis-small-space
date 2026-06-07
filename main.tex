@@ -155,11 +155,11 @@ Prezentujemy również ulepszony algorytm typu „dziel i zwyciężaj” (divide
 }
 \englishabstract{
 A subsequence of an array is any sequence that can be derived by deleting some of the elements from the original array and keeping the rest in their relative order.    
-Given an input array of comparable elements, we aim to find either a longest increasing subsequence or its length using parametrised space.
+Given an input array of comparable elements, we aim to find either a longest increasing subsequence or its length using parametrized space.
 It is well known that this problem can be solved in $\mathcal{O}(n \log n)$ time without memory constraints. 
-In~\cite{kiyomi2017space}, the authors presented a space-parametrised \Psort\ algorithm. Given a constraint $s$ on the number of words allowed in the working memory (where $\sqrt{n} \leq s \leq n$),
+In~\cite{kiyomi2017space}, the authors presented a space-parametrized \Psort\ algorithm. Given a constraint $s$ on the number of words allowed in the working memory (where $\sqrt{n} \leq s \leq n$),
 their algorithm computes the length of a LIS in $\mathcal{O}(\frac{n^2}{s} \log n)$ time. They also presented an algorithm for recovering a LIS in $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ time. 
-In this paper, we present an improved analysis of the space-parametrised \Psort\ algorithm introduced in~\cite{kiyomi2017space}.
+In this paper, we present an improved analysis of the space-parametrized \Psort\ algorithm introduced in~\cite{kiyomi2017space}.
 We show that the length computation runs in $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time.
 We also present an improved divide-and-conquer algorithm for recovering the sequence, which runs in $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ time while using $\mathcal{O}(s)$ words in the working memory.
 }
@@ -270,7 +270,7 @@ We use the RAM model, where the input sequence is read-only, and the working mem
 Our algorithm is based on the classic \Psort. Let us define basic notions used throughout the algorithm.
 The idea of the algorithm is to maintain \textit{piles} -- stacks of integers such that for all $x \in A$, $x$ belongs to the $i$-th pile if and only if the \textit{longest increasing subsequence} of $A$ ending in $x$ has length $i$.
 By this definition we can see that each element $x$ belongs to exactly one pile.
-Since both classic and space-parametrised variants of the \Psort\ algorithm are based on sequential passes through the input array, we define
+Since both classic and space-parametrized variants of the \Psort\ algorithm are based on sequential passes through the input array, we define
 pile operations with respect to the time when they are being used.
 
 \begin{definition}
@@ -319,8 +319,8 @@ Element $a_t \in P_i$ if and only if a \textit{longest increasing subsequence} o
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Space-parametrised Patience Sorting}
-Now we define the space-parametrised variant of \Psort\ that originates from \cite{kiyomi2017space}.
+\subsection{Space-parametrized Patience Sorting}
+Now we define the space-parametrized variant of \Psort\ that originates from \cite{kiyomi2017space}.
 
 Assume that our working memory is limited to $s'$ words. Let $s := \frac{s'}{4}$ and assume that $\sqrt{n} \leq s \leq n$.
 Similarly to the classic \Psort\ we will process the input array sequentially while maintaining piles. However, since our memory is limited and we cannot afford
@@ -408,7 +408,7 @@ The time complexity of a single \Ppass\ is $\mathcal{O}(n + W \log s )$, where $
 
 \section{New results}
 
-The complexity analysis for the space-parametrised \Psort\ in \cite{kiyomi2017space} for finding \LisLen\ yielded an $\mathcal{O}(\frac{n^2}{s} \log n)$ time.
+The complexity analysis for the space-parametrized \Psort\ in \cite{kiyomi2017space} for finding \LisLen\ yielded an $\mathcal{O}(\frac{n^2}{s} \log n)$ time.
 By providing a tighter estimation of the number of calls to the \textit{expensive filter} procedure, we prove that this algorithm actually runs in $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time.
 Furthermore, \cite{kiyomi2017space} presented a divide-and-conquer algorithm for computing a \Lis\ in $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ time.
 We provide a simpler and more efficient divide-and-conquer strategy that, combined with the improved bound for computing the \LisLen, runs in $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ time.
@@ -430,7 +430,7 @@ Let $W_i$ be the number of \textit{expensive filter} operations during the $i$-t
 Let $K$ be the total number of \Ppass -es.
 \end{definition}
 
-By using Observation~\ref{obs:ppass-time} we can see that time complexity of space-parametrised \Psort\ for $\sqrt{n} \leq s \leq n$ is:
+By using Observation~\ref{obs:ppass-time} we can see that time complexity of space-parametrized \Psort\ for $\sqrt{n} \leq s \leq n$ is:
 \[
 T(n,s) \in \mathcal{O}(nK + \log s \sum_{i=1}^K W_i).
 \]
@@ -668,8 +668,8 @@ If the current element $a_t$ is in the first half of the current range, its pred
 Otherwise, it inherits the predecessor of the top of the $(k-1)$-th pile at time $t$.
 
 \subsubsection{Procedure for finding the \LisLen}
-The procedure \textt{LisLen} repeatedly calls the \Ppass procedure.
-It maintains the \textit{current pile} in memory (we put an \textt{assert} statement to check that this pile has at most $s$ elements) and iteratively advances to the next reachable pile $j$ until the last pile of the LIS is found. 
+The procedure \texttt{LisLen} repeatedly calls the \Ppass procedure.
+It maintains the \textit{current pile} in memory (we put an \texttt{assert} statement to check that this pile has at most $s$ elements) and iteratively advances to the next reachable pile $j$ until the last pile of the LIS is found. 
 The total length is accumulated across these jumps. 
 Crucially, it returns both the length of the LIS and the splitting element $m$ (the predecessor of an element in the last pile), which is essential for the recursion.
 
@@ -683,22 +683,60 @@ Since recursion depth is at most $\log n$, the memory overhead created by the re
 
 \subsection{Testing}
 
-To evaluate the performance and verify the correctness of our implementation, we provide a \texttt{python} script for generating and running the tests in (\texttt{test\_lis.py}) file,
-and \texttt{test_lis.cpp} file that uses the interface implemented in \texttt{lis.cpp}.
+To evaluate the performance and verify the correctness of our implementation, we provide a \texttt{python} script \texttt{test\_lis.py}.
+Since our main contribution is the new divide-and-conquer procedure, we focused on testing the procedure that computes the whole LIS sequence.
 \subsubsection{Generating the test cases}
-For generating pseudo-random tests we use the built-in \texttt{python} \texttt{random} library.
-All tests are generated by picking a value $n$ from range $[1;10^7]$ and $n$ integers from range $[1; 2^31-1]$ forming the input sequence $A$.
-Generated test case is then saved in \texttt{tests/\textit{idx}.in} file along with the expected length of a LIS in \texttt{tests/\textit{idx}.out} computed by \texttt{lislen} function in \texttt{test\_lis.py} file.
+For generating pseudo-random tests we use the built-in \texttt{python} \texttt{random} library. 
+To measure the performance in different settings we provide three test splits:
+\begin{itemize}
+    \item \textit{small tests} -- 10 tests with $n \in [1, 10^5]$.
+    \item \textit{medium tests} -- 80 tests with $n \in [10^5, 10^7]$.
+    \item \textit{large tests} -- 10 tests with $n \in [10^7, 10^8]$.
+\end{itemize}
+In all tests we assume that $s = \lceil \sqrt{n} \rceil$.
+
 \subsubsection{Compiling the program}
-The script uses the \texttt{subprocess} library to compile the \texttt{test\_lis.cpp} file using the command \texttt{g++ -O3 -std=c++20 -fsized-deallocation test_lis.cpp -static -o test_lis.exe}.
+The script uses the \texttt{subprocess} library to compile the \texttt{test\_lis.cpp} file using the command \texttt{g++ -O3 -std=c++20 -fsized-deallocation test\_lis.cpp -static -o test\_lis.exe} .
+
 \subsubsection{Running the tests}
-To compare the performance, first we compute a LIS by calling \texttt{classicLIS} procedure from \texttt{test\_lis.cpp}. Then we run the space parametrised version (\texttt{Lis} function in \texttt{lis.cpp}) to compute a LIS.
+All tests are run by \texttt{test\_lis.py} by calling \texttt{test\_lis.cpp} with a path to the \texttt{.in} file with the $n$, $s$ parameters, and the input array.
+The \texttt{test\_lis.cpp} script reads the provided \texttt{.in} file, and run both \texttt{classicLIS} and \texttt{Lis} functions on the input array to measure the performance of classic \Psort\ and space-parametrized variant respectively.
+
 \subsubsection{Tests validation}
-To validate the test results, we compare the length of sequences outputted by C++ code with value stored in the \texttt{.out} file corresponding to the test.
-Then we check each sequence if its increasing, and if its a subsequence of the original input array (\texttt{is_increasing} and \texttt{is_subsequence} functions in \texttt{test_lis.py}).
+To validate the test results, we compare the length of sequences produced by \texttt{classicLIS} and \texttt{Lis} functions with value computed by \texttt{lislen} function from \texttt{test\_lis.cpp} file.
+Next we check if produced sequences are increasing subsequences of the input array (\texttt{is\_increasing} and \texttt{is\_subsequence} functions in \texttt{test\_lis.cpp}).
+
+\subsubsection{Time and memory measurements}
+To measure the time we use C++ \texttt{chrono} library. We call \texttt{high\_resolution\_clock::now()} right before and after executing both \texttt{classicLIS} and \texttt{Lis} functions.
+To measure the memory usage we added counters to \texttt{new} and \texttt{delete} operations to be able to store the memory usage in a variable.
+Since our main goal is to capture how much memory is being consumed by LIS-computing functions, we assume the baseline memory level after declaring the input and output buffers.
+
+\subsection{Results}
+
+Figure~\ref{fig:comparison} illustrates the comparison between the classic \Psort\ and our space-parametrized approach in terms of execution time and memory consumption.
+As expected, the classic algorithm is significantly faster. However, its memory usage grows linearly, \newline exceeding 300 MB for $n \approx 8.6 \times 10^7$.
+In contrast, our divide-and-conquer space-parametrized algorithm utilizes much less memory, staying under 0.25 MB even for the largest test cases.
+The execution time of the space-parametrized algorithm is higher but remains practical, demonstrating the expected time-memory tradeoff.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/plot_comparison.png}
+    \caption{Comparison of execution time and memory usage between classic \Psort\ and the space-parametrized algorithm.}
+    \label{fig:comparison}
+\end{figure}
+
+Figure~\ref{fig:param} highlights the performance of the parametrized algorithm. 
+We can observe that the execution time scales smoothly as predicted by the $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ bound, and the memory usage accurately aligns with the $\mathcal{O}(\sqrt{n})$ space constraint.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/plot_param.png}
+    \caption{Detailed performance of the space-parametrized algorithm, showing time and memory usage as a function of the input size $n$.}
+    \label{fig:param}
+\end{figure}
 
 \section{Summary}
-In this paper we revisited the space-parametrised variant of \Psort\ from~\cite{kiyomi2017space}.
+In this paper we revisited the space-parametrized variant of \Psort\ from~\cite{kiyomi2017space}.
 By bounding the total number of \textit{expensive filter} operations across all passes, we showed that computing \LisLen\ runs in
 $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time for $\sqrt{n} \leq s \leq n$, improving the previously stated $\mathcal{O}(\frac{n^2}{s} \log n)$ bound.
 We then derived a simpler divide-and-conquer reconstruction strategy which, using the same \Ppass\ procedure, computes an actual \Lis\ in
