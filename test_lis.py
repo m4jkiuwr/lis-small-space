@@ -21,35 +21,20 @@ class TestResult:
     param_mem: float
     valid: bool
 
-def lislen(seq: List[int]) -> int:
-    if not seq:
-        return 0
-    tails = []
-    import bisect
-    for x in seq:
-        idx = bisect.bisect_left(tails, x)
-        if idx < len(tails):
-            tails[idx] = x
-        else:
-            tails.append(x)
-    return len(tails)
-
-def generate_test(in_path: Path, out_path: Path, max_n: int, max_a: int, seed: int):
+def generate_test(in_path: Path, n_range: tuple[int, int], max_a: int, seed: int):
     random.seed(seed + hash(in_path.name))
-    n = random.randint(1, max_n)
+    n = random.randint(n_range[0], n_range[1])
     s = int(math.ceil(math.sqrt(n)))
     arr = [random.randint(0, max_a) for _ in range(n)]
-    with open(in_path, "w") as infile, open(out_path, "w") as outfile:
+    with open(in_path, "w") as infile:
         infile.write(f"{n} {s}\n")
         infile.write(" ".join(map(str, arr)) + "\n")
-        outfile.write(str(lislen(arr)))
 
-def generate(test_dir: Path, num_tests: int, max_n=5e7, max_a=2**31 - 1, seed: int = 42):
+def generate(test_dir: Path, num_tests: int, n_range: tuple[int, int], max_a=2**31 - 1, seed: int = 42):
     os.makedirs(test_dir, exist_ok=True)
     for idx in tqdm(iterable=range(1, num_tests + 1), desc="Generating tests"):
         in_path = test_dir / f"{idx}.in"
-        out_path = test_dir / f"{idx}.out"
-        generate_test(in_path=in_path, out_path=out_path, max_n=int(max_n), max_a=int(max_a), seed=seed)
+        generate_test(in_path=in_path, n_range=n_range, max_a=int(max_a), seed=seed)
 
 def _compile(prog: Path) -> Path:
     tgt_path = prog.with_suffix(".exe").absolute()
@@ -150,15 +135,27 @@ def plot_results(csv_path: str):
 
 if __name__ == "__main__":
     try:
-        test_dir = Path("tests")
+        small_dir = Path("small_tests")
+        medium_dir = Path("medium_tests")
+        large_dir = Path("large_tests")
 
-        print("Generating tests...")
-        generate(test_dir=test_dir, num_tests=100, max_n=1e7, seed=42)
+        print("Generating small tests...")
+        generate(test_dir=small_dir, num_tests=10, n_range=(1, 100000), seed=42)
+
+        print("Generating medium tests...")
+        generate(test_dir=medium_dir, num_tests=80, n_range=(100000, 10000000), seed=4242)
+
+        print("Generating large tests...")
+        generate(test_dir=large_dir, num_tests=10, n_range=(10000000, 100000000), seed=424242)
 
         exe_path = _compile(prog=Path("test_lis.cpp"))
-        results = run_all(exe_path=exe_path, test_dir=test_dir)
 
-        csv_path = "small_results.csv"
+        all_results = []
+        for d in [small_dir, medium_dir, large_dir]:
+            print(f"Running tests in {d}...")
+            all_results.extend(run_all(exe_path=exe_path, test_dir=d))
+
+        csv_path = "results.csv"
         with open(csv_path, "w", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(
@@ -172,7 +169,7 @@ if __name__ == "__main__":
                     "valid",
                 ]
             )
-            for r in results:
+            for r in all_results:
                 writer.writerow(
                     [
                         r.n,
