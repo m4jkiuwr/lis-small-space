@@ -146,7 +146,7 @@
 \polishabstract {
 Podciąg tablicy to dowolny ciąg, który można uzyskać poprzez usunięcie niektórych elementów z oryginalnej tablicy i zachowanie pozostałych w niezmienionym porządku.
 Dla danej tablicy wejściowej porównywalnych elementów, naszym celem jest znalezienie najdłuższego rosnącego podciągu lub jego długości przy użyciu sparametryzowanej pamięci.
-Powszechnie wiadomo, że bez ograniczeń pamięciowych problem ten można rozwiązać w czasie $\mathcal{O}(n \log n)$.W pracy~\cite{kiyomi2017space} autorzy zaprezentowali algorytm \Psort\ ze sparametryzowaną pamięcią.
+Powszechnie wiadomo, że bez ograniczeń pamięciowych problem ten można rozwiązać w czasie $\mathcal{O}(n \log n)$. W pracy~\cite{kiyomi2017space} autorzy zaprezentowali algorytm \Psort\ ze sparametryzowaną pamięcią.
 Przy ograniczeniu $s$ na liczbę słów dozwolonych w pamięci roboczej (gdzie $\sqrt{n} \leq s \leq n$), ich algorytm oblicza długość LIS w czasie $\mathcal{O}(\frac{n^2}{s} \log n)$.
 Przedstawili również algorytm do odtwarzania LIS w czasie $\mathcal{O}(\frac{n^2}{s} \log^2 n)$.
 W niniejszej pracy prezentujemy ulepszoną analizę algorytmu \Psort\ ze sparametryzowaną pamięcią, wprowadzonego w pracy~\cite{kiyomi2017space}.
@@ -538,10 +538,10 @@ Since $m \in A_\ell$, $L_1$ is a subsequence of $A_\ell$. Because $m$ is the las
 Therefore, since $\textsc{Lis}_a$ is a \Lis of $A$, $L_1$ is $L_{\leq m}$ and $L_2$ is $L_{> m}$.
 \end{proof}
 
-It is easy to see how to modify the \Ppass\ procedure and store the pred of every element adding only $\mathcal{O}(n)$ time per \Ppass.
-We can also see that to compute pred for any element that is not filtered out during a \Ppass, we can use pred values 
-and storing the additional value only for the $\mathcal{O}(s)$ elements that we already store in memory, thus keeping both time and memory complexity with respect to big-$\mathcal{O}$ notation.
-We deduce that $m$ is $\operatorname{pred}(x)$ for some $x$ in the last pile and since computing pred values does not change the time and memory complexity of the \Ppass\ 
+It is easy to see how to modify the \Ppass\ procedure to store the $\operatorname{pred}$ of every element, adding only $\mathcal{O}(n)$ time per \Ppass.
+We can also see that to compute the $\operatorname{pred}$ for any element that is not filtered out during a \Ppass, we can use the existing $\operatorname{pred}$ values 
+and store the additional value only for the $\mathcal{O}(s)$ elements that we already keep in memory, thus preserving both the time and memory complexity bounds.
+We deduce that $m$ is $\operatorname{pred}(x)$ for some $x$ in the last pile. Since computing the $\operatorname{pred}$ values does not change the time and memory complexity of the \Ppass\ procedure, we obtain the following observation.
 
 \begin{observation}The time complexity for solving the \Lis\ is:
 $$T(n, s) = \begin{cases}
@@ -653,7 +653,7 @@ Initially we call the procedure with values $lb, ub$ set to $-\infty$ and $\inft
 
 
 \section{Algorithm performance results}
-We provide the implementation of described algorithm in a github repository\footnote{\url{https://github.com/m4jkiuwr/lis-small-space}}. 
+We provide an implementation of the described algorithm in a GitHub repository\footnote{\url{https://github.com/m4jkiuwr/lis-small-space}}. 
 The code is written in C++20. It uses modern C++ features like the \texttt{std::span} for clean and efficient sub-array handling and \texttt{std::optional} for representing the $\operatorname{pred}$ values.
 
 \subsection{Implementation details}
@@ -668,7 +668,7 @@ If the current element $a_t$ is in the first half of the current range, its pred
 Otherwise, it inherits the predecessor of the top of the $(k-1)$-th pile at time $t$.
 
 \subsubsection{Procedure for finding the \LisLen}
-The procedure \texttt{LisLen} repeatedly calls the \Ppass procedure.
+The procedure \texttt{LisLen} repeatedly calls the \Ppass\ procedure.
 It maintains the \textit{current pile} in memory (we put an \texttt{assert} statement to check that this pile has at most $s$ elements) and iteratively advances to the next reachable pile $j$ until the last pile of the LIS is found. 
 The total length is accumulated across these jumps. 
 Crucially, it returns both the length of the LIS and the splitting element $m$ (the predecessor of an element in the last pile), which is essential for the recursion.
@@ -678,8 +678,8 @@ The \texttt{Lis} function implements the divide-and-conquer strategy.
 If the input size is less than or equal to $s$, it falls back to \texttt{classicLIS}, which uses the standard $O(n \log n)$ patience sorting algorithm with $O(n)$ space. 
 For larger inputs, it calls \texttt{LisLen} to find the split point $m$ and then recursively solves for $A_\ell$ and $A_r$. 
 We use \texttt{std::span} to avoid copying sub-arrays during recursion, ensuring that only $O(s)$ additional words are used for storing the piles and metadata.
-Notice that although the algorithm uses recursion, the only value created in each call is the $m$ value for splitting the array.
-Since recursion depth is at most $\log n$, the memory overhead created by the recursive calls is $\mathcal{O}(\log n)$ words.
+Notice that although the algorithm uses recursion, the only value created in each call is the $m$ value for splitting the array and two pointers identifying the \texttt{std::span} boundaries.
+Since recursion depth is at most $\log n$, the memory overhead created by it is $\mathcal{O}(\log n)$ words.
 
 \subsection{Testing}
 
@@ -700,15 +700,15 @@ The script uses the \texttt{subprocess} library to compile the \texttt{test\_lis
 
 \subsubsection{Running the tests}
 All tests are run by \texttt{test\_lis.py} by calling \texttt{test\_lis.cpp} with a path to the \texttt{.in} file with the $n$, $s$ parameters, and the input array.
-The \texttt{test\_lis.cpp} script reads the provided \texttt{.in} file, and run both \texttt{classicLIS} and \texttt{Lis} functions on the input array to measure the performance of classic \Psort\ and space-parametrized variant respectively.
+The \texttt{test\_lis.cpp} script reads the provided \texttt{.in} file and runs both the \texttt{classicLIS} and \texttt{Lis} functions on the input array to measure the performance of the classic \Psort\ and the space-parametrized variant, respectively.
 
 \subsubsection{Tests validation}
-To validate the test results, we compare the length of sequences produced by \texttt{classicLIS} and \texttt{Lis} functions with value computed by \texttt{lislen} function from \texttt{test\_lis.cpp} file.
-Next we check if produced sequences are increasing subsequences of the input array (\texttt{is\_increasing} and \texttt{is\_subsequence} functions in \texttt{test\_lis.cpp}).
+To validate the test results, we compare the lengths of the sequences produced by the \texttt{classicLIS} and \texttt{Lis} functions with the value computed by the \texttt{lislen} function from the \texttt{test\_lis.cpp} file.
+Next, we check if the produced sequences are increasing subsequences of the input array (\texttt{is\_increasing} and \texttt{is\_subsequence} functions in \texttt{test\_lis.cpp}).
 
 \subsubsection{Time and memory measurements}
-To measure the time we use C++ \texttt{chrono} library. We call \texttt{high\_resolution\_clock::now()} right before and after executing both \texttt{classicLIS} and \texttt{Lis} functions.
-To measure the memory usage we added counters to \texttt{new} and \texttt{delete} operations to be able to store the memory usage in a variable.
+To measure the time, we use C++ \texttt{chrono} library. We call \texttt{high\_resolution\_clock::now()} right before and after executing both \texttt{classicLIS} and \texttt{Lis} functions.
+To measure the memory usage, we added counters to \texttt{new} and \texttt{delete} operations to be able to store the memory usage in a variable.
 Since our main goal is to capture how much memory is being consumed by LIS-computing functions, we assume the baseline memory level after declaring the input and output buffers.
 
 \subsection{Results}
@@ -737,7 +737,7 @@ We can observe that the execution time scales smoothly as predicted by the $\mat
 
 \newpage
 \section{Summary}
-In this paper we revisited the space-parametrized variant of \Psort\ from~\cite{kiyomi2017space}.
+In this paper, we revisited the space-parametrized variant of \Psort\ from~\cite{kiyomi2017space}.
 By bounding the total number of \textit{expensive filter} operations across all passes, we showed that computing \LisLen\ runs in
 $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time for $\sqrt{n} \leq s \leq n$, improving the previously stated $\mathcal{O}(\frac{n^2}{s} \log n)$ bound.
 We then derived a simpler divide-and-conquer reconstruction strategy which, using the same \Ppass\ procedure, computes an actual \Lis\ in
@@ -745,10 +745,10 @@ $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ time while preserving t
 Finally, we implemented the algorithms in C++20 and benchmarked the implementation by measuring time and memory usage when running tests.
 
 \subsubsection{Open questions}
-A natural open question is whether there exists an exact algorithm for \LisLen\ and \Lis\ $o(\sqrt{n})$ words of working memory.
-As pointed out in~\cite{kiyomi2017space} a definite 'no' answer would be surprising as it implies that \textsc{SC} $\neq$ \textsc{P} $\cap$ \textsc{PolyL},
+A natural open question is whether there exists an exact algorithm for \LisLen\ and \Lis\ using $o(\sqrt{n})$ words of working memory.
+As pointed out in~\cite{kiyomi2017space}, a definite 'no' answer would be surprising as it implies that \textsc{SC} $\neq$ \textsc{P} $\cap$ \textsc{PolyL},
 where \textsc{SC} -- Steve's Class is the class of problems solvable by an algorithm running in polynomial time and polylogarithmic space ~\cite{sc-cfl} ~\cite{rl-sc}.
-One could ask about an existence of a log-space algorithm. Showing NL-hardness of (a decision version of) LIS would provide some evidence for a 'no' answer to this question.
+One could ask about the existence of a log-space algorithm. Showing NL-hardness of (a decision version of) LIS would provide some evidence for a 'no' answer to this question.
 
 
 
