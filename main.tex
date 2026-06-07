@@ -661,6 +661,7 @@ The code is written in C++20. It uses modern C++ features like the \texttt{std::
 \subsubsection{\Ppass}
 The \Ppass\ procedure is implemented in two phases: \texttt{Ppass\_first} and \texttt{Ppass\_second}. 
 In \texttt{Ppass\_first}, we identify the next pile $j$ such that its size $|P_j| \leq s$, while advancing the lower bound of the pile indices by at least $s$. 
+\newline
 We maintain the top elements of $2s$ piles in an array \texttt{p}. The binary search for the expensive filter is implemented using \texttt{std::lower\_bound} on the indices of top elements, which yields the $\mathcal{O}(\log s)$ overhead per filter operation.
 
 In \texttt{Ppass\_second}, we reconstruct the $j$-th pile. To handle the divide-and-conquer requirements, each element in the pile is stored alongside its predecessor index or value. 
