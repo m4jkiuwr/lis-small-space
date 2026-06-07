@@ -715,7 +715,7 @@ Since our main goal is to capture how much memory is being consumed by LIS-compu
 
 Figure~\ref{fig:comparison} illustrates the comparison between the classic \Psort\ and our space-parametrized approach in terms of execution time and memory consumption.
 As expected, the classic algorithm is significantly faster. However, its memory usage grows linearly, \newline exceeding 300 MB for $n \approx 8.6 \times 10^7$.
-In contrast, our divide-and-conquer space-parametrized algorithm utilizes much less memory, staying under 0.25 MB even for the largest test cases.
+In contrast, our divide-and-conquer procedure uses much less memory, staying under 0.25 MB even for the largest test cases.
 The execution time of the space-parametrized algorithm is higher but remains practical, demonstrating the expected time-memory tradeoff.
 
 \begin{figure}[H]
@@ -735,6 +735,7 @@ We can observe that the execution time scales smoothly as predicted by the $\mat
     \label{fig:param}
 \end{figure}
 
+\newpage
 \section{Summary}
 In this paper we revisited the space-parametrized variant of \Psort\ from~\cite{kiyomi2017space}.
 By bounding the total number of \textit{expensive filter} operations across all passes, we showed that computing \LisLen\ runs in
@@ -745,6 +746,10 @@ Finally, we implemented the algorithms in C++20 and benchmarked the implementati
 
 \subsubsection{Open questions}
 A natural open question is whether there exists an exact algorithm for \LisLen\ and \Lis\ $o(\sqrt{n})$ words of working memory.
+As pointed out in~\cite{kiyomi2017space} a definite 'no' answer would be surprising as it implies that \textsc{SC} $\neq$ \textsc{P} $\cap$ \textsc{PolyL},
+where \textsc{SC} -- Steve's Class is the class of problems solvable by an algorithm running in polynomial time and polylogarithmic space ~\cite{sc-cfl} ~\cite{rl-sc}.
+One could ask about an existence of a log-space algorithm. Showing NL-hardness of (a decision version of) LIS would provide some evidence for a 'no' answer to this question.
+
 
 
 
