@@ -88,13 +88,20 @@ def plot_results(csv_path: str):
     df = df.sort_values(by="n")
 
     # 1. Comparison Plot (Classic vs Param)
-    fig1, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+    fig1, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
+
+    ticks = [i * 2 * 10**7 for i in range(6)]
+    labels = [f"${i*2}*10^7$" if i > 0 else "0" for i in range(6)]
+    labels[-1] = "$10^8$"
 
     ax1.plot(df["n"], df["classic_time"], marker="o", linestyle="-", label="Classic Time", color="blue")
     ax1.plot(df["n"], df["param_time"], marker="x", linestyle="-", label="Param Time", color="orange")
     ax1.set_xlabel("Number of elements (n)")
     ax1.set_ylabel("Time (s)")
     ax1.set_title("Comparison: Time vs. n")
+    ax1.set_xlim(0, 1e8)
+    ax1.set_xticks(ticks)
+    ax1.set_xticklabels(labels)
     ax1.legend()
     ax1.grid(True)
 
@@ -103,6 +110,9 @@ def plot_results(csv_path: str):
     ax2.set_xlabel("Number of elements (n)")
     ax2.set_ylabel("Memory (MB)")
     ax2.set_title("Comparison: Memory vs. n")
+    ax2.set_xlim(0, 1e8)
+    ax2.set_xticks(ticks)
+    ax2.set_xticklabels(labels)
     ax2.legend()
     ax2.grid(True)
 
@@ -112,12 +122,15 @@ def plot_results(csv_path: str):
     plt.close(fig1)
 
     # 2. Param Only Plot
-    fig2, (ax3, ax4) = plt.subplots(1, 2, figsize=(12, 5))
+    fig2, (ax3, ax4) = plt.subplots(1, 2, figsize=(15, 5))
 
     ax3.plot(df["n"], df["param_time"], marker="x", linestyle="-", label="Param Time", color="orange")
     ax3.set_xlabel("Number of elements (n)")
     ax3.set_ylabel("Time (s)")
     ax3.set_title("Parametrized-space: Time vs. n")
+    ax3.set_xlim(0, 1e8)
+    ax3.set_xticks(ticks)
+    ax3.set_xticklabels(labels)
     ax3.legend()
     ax3.grid(True)
 
@@ -125,6 +138,9 @@ def plot_results(csv_path: str):
     ax4.set_xlabel("Number of elements (n)")
     ax4.set_ylabel("Memory (MB)")
     ax4.set_title("Parametrized-space: Memory vs. n")
+    ax4.set_xlim(0, 1e8)
+    ax4.set_xticks(ticks)
+    ax4.set_xticklabels(labels)
     ax4.legend()
     ax4.grid(True)
 
@@ -134,57 +150,52 @@ def plot_results(csv_path: str):
     plt.close(fig2)
 
 if __name__ == "__main__":
-    try:
-        small_dir = Path("small_tests")
-        medium_dir = Path("medium_tests")
-        large_dir = Path("large_tests")
+    small_dir = Path("small_tests")
+    medium_dir = Path("medium_tests")
+    large_dir = Path("large_tests")
 
-        print("Generating small tests...")
-        generate(test_dir=small_dir, num_tests=10, n_range=(1, 100000), seed=42)
+    print("Generating small tests...")
+    generate(test_dir=small_dir, num_tests=10, n_range=(1, 100000), seed=42)
 
-        print("Generating medium tests...")
-        generate(test_dir=medium_dir, num_tests=80, n_range=(100000, 10000000), seed=4242)
+    print("Generating medium tests...")
+    generate(test_dir=medium_dir, num_tests=80, n_range=(100000, 10000000), seed=4242)
 
-        print("Generating large tests...")
-        generate(test_dir=large_dir, num_tests=10, n_range=(10000000, 100000000), seed=424242)
+    print("Generating large tests...")
+    generate(test_dir=large_dir, num_tests=10, n_range=(10000000, 100000000), seed=424242)
 
-        exe_path = _compile(prog=Path("test_lis.cpp"))
+    exe_path = _compile(prog=Path("test_lis.cpp"))
 
-        all_results = []
-        for d in [small_dir, medium_dir, large_dir]:
-            print(f"Running tests in {d}...")
-            all_results.extend(run_all(exe_path=exe_path, test_dir=d))
+    all_results = []
+    for d in [small_dir, medium_dir, large_dir]:
+        print(f"Running tests in {d}...")
+        all_results.extend(run_all(exe_path=exe_path, test_dir=d))
 
-        csv_path = "results.csv"
-        with open(csv_path, "w", newline="") as f:
-            writer = csv.writer(f)
+    csv_path = "results.csv"
+    with open(csv_path, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(
+            [
+                "n",
+                "s",
+                "classic_time",
+                "classic_mem",
+                "param_time",
+                "param_mem",
+                "valid",
+            ]
+        )
+        for r in all_results:
             writer.writerow(
                 [
-                    "n",
-                    "s",
-                    "classic_time",
-                    "classic_mem",
-                    "param_time",
-                    "param_mem",
-                    "valid",
+                    r.n,
+                    r.s,
+                    r.classic_time,
+                    r.classic_mem,
+                    r.param_time,
+                    r.param_mem,
+                    r.valid,
                 ]
             )
-            for r in all_results:
-                writer.writerow(
-                    [
-                        r.n,
-                        r.s,
-                        r.classic_time,
-                        r.classic_mem,
-                        r.param_time,
-                        r.param_mem,
-                        r.valid,
-                    ]
-                )
-        print(f"Results saved to {csv_path}")
+    print(f"Results saved to {csv_path}")
 
-        plot_results(csv_path)
-
-    except Exception as e:
-        print(f"\nError: {e}")
-        sys.exit(1)
+    plot_results(csv_path)
