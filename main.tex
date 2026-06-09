@@ -749,7 +749,7 @@ We then derived a simpler divide-and-conquer reconstruction strategy which, usin
 $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ time while preserving the $\mathcal{O}(s)$ bound on the number of words in the working space.
 Finally, we implemented the algorithms in C++20 and benchmarked the implementation by measuring time and memory usage when running tests.
 
-\subsubsection{Open questions}
+\subsection{Open questions}
 A natural open question is whether there exists an exact algorithm for \LisLen\ and \Lis\ using $o(\sqrt{n})$ words of working memory.
 As pointed out in~\cite{kiyomi2017space}, a definite 'no' answer would be surprising as it implies that \textsc{SC} $\neq$ \textsc{P} $\cap$ \textsc{PolyL},
 where \textsc{SC} -- Steve's Class is the class of problems solvable by an algorithm running in polynomial time and polylogarithmic space ~\cite{sc-cfl} ~\cite{rl-sc}.
