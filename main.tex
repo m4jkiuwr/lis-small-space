@@ -255,7 +255,7 @@ We define two variants of the Longest Increasing Subsequence problem.
 {The longest subsequence $(a_{i_1}, a_{i_2}, \dots, a_{i_k})$ of $A$ such that $i_1 < i_2 < \dots < i_k$ and $a_{i_1} < a_{i_2} < \dots < a_{i_k}$.}
 
 \problembox
-{Length of \Lis \ (\LisLen)}
+{Length of \Lis\ (\LisLen)}
 {A sequence of $n$ numbers $A = (a_1, a_2, \dots, a_n)$.}
 {$k$ -- the largest integer such that there exist an increasing subsequence in $A$ of length $k$}
 
@@ -525,17 +525,17 @@ Notice that since length of $\textsc{Lis}_y$ is $i-1$, by appending $a_t$ to it 
 
 \begin{observation}
 Let $a \in A$ be an element that belongs to the last pile. 
-Then, for $m := \operatorname{pred}(a)$ concatenation of $L_{\leq m}$ for $A_\ell$ and $L_{> m}$ for $A_r$ is a \Lis of $A$.
+Then, for $m := \operatorname{pred}(a)$ concatenation of $L_{\leq m}$ for $A_\ell$ and $L_{> m}$ for $A_r$ is a \Lis\ of $A$.
 \end{observation}
 
 \begin{proof}
 This follows directly from the definition of $\operatorname{pred}$. Let us choose an element $a$ from the last pile. 
 Consider a $\textsc{Lis}_a$ where $m$ is the last element from $A_\ell$ belonging to this sequence.
-Since $a$ is located in the last pile, $\textsc{Lis}_a$ is a \Lis of $A$.
+Since $a$ is located in the last pile, $\textsc{Lis}_a$ is a \Lis\ of $A$.
 Because $\textsc{Lis}_a$ is an increasing sequence and $m$ is in it, there exist increasing subsequences $L_1 \text{ and } L_2$, such that $\textsc{Lis}_a$ is their concatenation and $m$ is the last element of $L_1$.
 It immediately follows that each element of $L_1$ is less than or equal to $m$ and each element of $L_2$ is greater than $m$.
 Since $m \in A_\ell$, $L_1$ is a subsequence of $A_\ell$. Because $m$ is the last element from $A_\ell$ in $\textsc{Lis}_a$, $L_2$ is a subsequence of $A_r$.
-Therefore, since $\textsc{Lis}_a$ is a \Lis of $A$, $L_1$ is $L_{\leq m}$ and $L_2$ is $L_{> m}$.
+Therefore, since $\textsc{Lis}_a$ is a \Lis\ of $A$, $L_1$ is $L_{\leq m}$ and $L_2$ is $L_{> m}$.
 \end{proof}
 
 It is easy to see how to modify the \Ppass\ procedure to store the $\operatorname{pred}$ of every element, adding only $\mathcal{O}(n)$ time per \Ppass.
