@@ -268,7 +268,7 @@ We use the RAM model, where the input sequence is read-only, and the working mem
 \subsection{\Psort}
 
 Our algorithm is based on the classic \Psort. Let us define basic notions used throughout the algorithm.
-The idea of the algorithm is to maintain \textit{piles} -- stacks of integers such that for all $x \in A$, $x$ belongs to the $i$-th pile if and only if the \textit{longest increasing subsequence} of $A$ ending in $x$ has length $i$.
+The idea of the algorithm is to maintain \textit{piles} -- stacks of integers such that for all $x \in A$, $x$ belongs to the $i$-th pile if and only if the \textit{\underline{longest} increasing subsequence} of $A$ ending in $x$ has length $i$.
 By this definition we can see that each element $x$ belongs to exactly one pile.
 Since both classic and space-parametrized variants of the \Psort\ algorithm are based on sequential passes through the input array, we define
 pile operations with respect to the time when they are being used.
@@ -702,6 +702,10 @@ The script uses the \texttt{subprocess} library to compile the \texttt{test\_lis
 \subsubsection{Running the tests}
 All tests are run by \texttt{test\_lis.py} by calling \texttt{test\_lis.cpp} with a path to the \texttt{.in} file with the $n$, $s$ parameters, and the input array.
 The \texttt{test\_lis.cpp} script reads the provided \texttt{.in} file and runs both the \texttt{classicLIS} and \texttt{Lis} functions on the input array to measure the performance of the classic \Psort\ and the space-parametrized variant, respectively.
+
+\subsubsection{Running the scripts}
+To generate and run tests as well as to plot the results, we run the \texttt{python} script using the \texttt{py test\_lis.py} command. 
+In order to run custom tests, one can compile the \texttt{test\_lis.cpp} file using the previously provided command and execute the \texttt{test\_lis.exe <path>} command, where \texttt{<path>} points to the \texttt{.in} file that contains the $n$ and $s$ parameters and the input array.
 
 \subsubsection{Tests validation}
 To validate the test results, we compare the lengths of the sequences produced by the \texttt{classicLIS} and \texttt{Lis} functions with the value computed by the \texttt{lislen} function from the \texttt{test\_lis.cpp} file.
