@@ -151,7 +151,7 @@ Przy ograniczeniu $s$ na liczbę słów dozwolonych w pamięci roboczej (gdzie $
 Przedstawili również algorytm do odtwarzania LIS w czasie $\mathcal{O}(\frac{n^2}{s} \log^2 n)$.
 W niniejszej pracy prezentujemy ulepszoną analizę algorytmu \Psort\ ze sparametryzowaną pamięcią, wprowadzonego w pracy~\cite{kiyomi2017space}.
 Pokazujemy, że obliczanie długości działa w czasie $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$.
-Prezentujemy również ulepszony algorytm typu „dziel i zwyciężaj” (divide-and-conquer) do odtwarzania podciągu, który działa w czasie $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$, zużywając przy tym $\mathcal{O}(s)$ słów w pamięci roboczej.
+Prezentujemy również ulepszony algorytm typu „dziel i zwyciężaj” (divide-and-conquer) do odtwarzania podciągu, który działa w czasie $\mathcal{O}(\max(n \log n \log \frac{n}{s}, \frac{n^2}{s}))$, zużywając przy tym $\mathcal{O}(s)$ słów w pamięci roboczej.
 }
 \englishabstract{
 A subsequence of an array is any sequence that can be derived by deleting some of the elements from the original array and keeping the rest in their relative order.    
@@ -161,7 +161,7 @@ In~\cite{kiyomi2017space}, the authors presented a space-parametrized \Psort\ al
 their algorithm computes the length of a LIS in $\mathcal{O}(\frac{n^2}{s} \log n)$ time. They also presented an algorithm for recovering a LIS in $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ time. 
 In this paper, we present an improved analysis of the space-parametrized \Psort\ algorithm introduced in~\cite{kiyomi2017space}.
 We show that the length computation runs in $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time.
-We also present an improved divide-and-conquer algorithm for recovering the sequence, which runs in $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ time while using $\mathcal{O}(s)$ words in the working memory.
+We also present an improved divide-and-conquer algorithm for recovering the sequence, which runs in $\mathcal{O}(\max(n \log n \log \frac{n}{s}, \frac{n^2}{s}))$ time while using $\mathcal{O}(s)$ words in the working memory.
 }
 \author         {Mikołaj Owczarz}
 \advisor        {dr Karol Pokorski}
@@ -192,7 +192,7 @@ A variation of \Psort\ is presented in \cite{kiyomi2017space}, which, for a give
 In this paper, we improve the bounds achieved in \cite{kiyomi2017space}. For finding the length of a LIS, we conduct a tighter time analysis, showing that the algorithm proposed in \cite{kiyomi2017space} actually runs in $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time,
 while maintaining the $\mathcal{O}(s)$ bound for the number of words in the working memory. 
 Next, we observe that an alternative, simpler divide-and-conquer algorithm can be derived, which is more efficient than the one provided in \cite{kiyomi2017space}.
-Combined with the tighter analysis for a LIS length computation, it runs in $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ time.
+Combined with the tighter analysis for a LIS length computation, it runs in $\mathcal{O}(\max(n \log n \log \frac{n}{s}, \frac{n^2}{s}))$ time.
 
 \subsection{Related work}
 The LIS problem, in addition to its classic setting, has many heavily-researched variations.
@@ -231,7 +231,7 @@ A notable example is the \textit{Patience Diff} algorithm \cite{patience-diff}, 
 % W przypadku obliczania długości LIS przeprowadzamy ściślejszą analizę czasową, pokazując, że algorytm zaproponowany w \cite{kiyomi2017space} w rzeczywistości działa w czasie $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$,
 % zachowując jednocześnie ograniczenie $\mathcal{O}(s)$ na liczbę słów w pamięci roboczej. 
 % Następnie zauważamy, że można wyprowadzić alternatywny, prostszy algorytm typu „dziel i rządź”, który jest wydajniejszy niż ten przedstawiony w \cite{kiyomi2017space}
-% i w połączeniu ze ściślejszą analizą obliczania długości LIS, działa on w czasie $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$.
+% i w połączeniu ze ściślejszą analizą obliczania długości LIS, działa on w czasie $\mathcal{O}(\max(n \log n \log \frac{n}{s}, \frac{n^2}{s}))$.
 
 % \subsection{Prace powiązane}
 % Problem LIS, oprócz swojego klasycznego sformułowania, posiada wiele intensywnie badanych wariantów.
@@ -411,7 +411,7 @@ The time complexity of a single \Ppass\ is $\mathcal{O}(n + W \log s )$, where $
 The complexity analysis for the space-parametrized \Psort\ in \cite{kiyomi2017space} for finding \LisLen\ yielded an $\mathcal{O}(\frac{n^2}{s} \log n)$ time.
 By providing a tighter estimation of the number of calls to the \textit{expensive filter} procedure, we prove that this algorithm actually runs in $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time.
 Furthermore, \cite{kiyomi2017space} presented a divide-and-conquer algorithm for computing a \Lis\ in $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ time.
-We provide a simpler and more efficient divide-and-conquer strategy that, combined with the improved bound for computing the \LisLen, runs in $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ time.
+We provide a simpler and more efficient divide-and-conquer strategy that, combined with the improved bound for computing the \LisLen, runs in $\mathcal{O}(\max(n \log n \log \frac{n}{s}, \frac{n^2}{s}))$ time.
 
 
 \subsection{Length computation}
@@ -480,7 +480,7 @@ for some constants $c, c'$. It is easy to see that $T(n, s) \in \mathcal{O}(\max
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{LIS computation}
-To compute the \Lis, we present an alternative divide-and-conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ time. This improves on the earlier $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ result.
+To compute the \Lis, we present an alternative divide-and-conquer algorithm, which combined with the improved length bound, runs in $\mathcal{O}(\max(n \log n \log \frac{n}{s}, \frac{n^2}{s}))$ time. This improves on the earlier $\mathcal{O}(\frac{n^2}{s} \log^2 n)$ result.
 
 \begin{definition}
 For $x \in A$ let $\textsc{Lis}_x$ be any one of the \textit{longest increasing subsequence} of $A$ ending in $x$.
@@ -543,20 +543,22 @@ We can also see that to compute the $\operatorname{pred}$ for any element that i
 and store the additional value only for the $\mathcal{O}(s)$ elements that we already keep in memory, thus preserving both the time and memory complexity bounds.
 We deduce that $m$ is $\operatorname{pred}(x)$ for some $x$ in the last pile. Since computing the $\operatorname{pred}$ values does not change the time and memory complexity of the \Ppass\ procedure, we obtain the following observation.
 
-\begin{observation}The time complexity for solving the \Lis\ is:
+\begin{lemma}The time complexity for solving the \Lis\ is:
 $$T(n, s) = \begin{cases}
 c'n \log n \text{ if } n \leq s \\
 2T(\frac{n}{2}, s) + c\operatorname{max}(n \log n, \frac{n^2}{s}) \text{ otherwise}
 \end{cases}$$
-For some constants $c, c'$. This is $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$.
-\end{observation}
+For some constants $c, c'$. This is $\mathcal{O}(\operatorname{max}(n \log n \log \frac{n}{s}, \frac{n^2}{s}))$.
+\end{lemma}
 \begin{proof}
 This is because we find the element $m$ during a single \Ppass\ which runs in $\mathcal{O}(\operatorname{max}(n \log n, \frac{n^2}{s}))$ time and then solve on two halves of the input independently.
 
 To justify the complexity bound, suppose that we claim $T(n, s) = 2T(\frac{n}{2}, s) + c_1n \log n + c_2\frac{n^2}{s}$ when $n > s$ for some constants $c_1, c_2$.
-Notice that $n \log n$ dominates over $\frac{n^2}{s}$ when $s > \frac{n}{\log n}$, and there are at most $\log \log n$ such levels until the base case $n \leq s$ is reached, contributing at most $\mathcal{O}(n \log n \log \log n)$ to the total work.
-Otherwise, when $\frac{n^2}{s}$ dominates, the recursion yields $\mathcal{O}(\frac{n^2}{s})$. 
-Therefore, the final time complexity is $\mathcal{O}(\operatorname{max}(n \log n \log \log n, \frac{n^2}{s}))$.
+Observe that since every level halves the problem size until it is less than or equal to $s$, there are $\log \frac{n}{s} $ levels of the recursion. 
+At each level, the sum of $n \log n$ terms is bounded by $c_1 n \log n$, thus it contributes to $c_1 n \log n \log \frac{n}{s}$ to the whole recursion.
+Furthermore, for $T'(n, s) := 2T'(\frac{n}{2}, s) + c\frac{n^2}{s}$, where $c$ is a constant, $T'$ is $\mathcal{O}(\frac{n^2}{s})$. \newline
+This makes $T \in \mathcal{O}(n \log n \log \frac{n}{s} + \frac{n^2}{s})$, which is $\mathcal{O}(\operatorname{max}(n \log n \log \frac{n}{s},\frac{n^2}{s}))$ 
+
 \end{proof}
 
 Below we provide the algorithm for computing \Lis\ in pseudocode.
@@ -731,7 +733,7 @@ The execution time of the space-parametrized algorithm is higher but remains pra
 \end{figure}
 
 Figure~\ref{fig:param} highlights the performance of the parametrized algorithm. 
-We can observe that the execution time scales smoothly as predicted by the $\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ bound, and the memory usage accurately aligns with the $\mathcal{O}(\sqrt{n})$ space constraint.
+We can observe that the execution time scales smoothly as predicted by the $\mathcal{O}(\max(n \log n \log \frac{n}{s}, \frac{n^2}{s}))$ bound, and the memory usage accurately aligns with the $\mathcal{O}(\sqrt{n})$ space constraint.
 
 \begin{figure}[H]
     \centering
@@ -746,7 +748,7 @@ In this paper, we revisited the space-parametrized variant of \Psort\ from~\cite
 By bounding the total number of \textit{expensive filter} operations across all passes, we showed that computing \LisLen\ runs in
 $\mathcal{O}(\max(n \log n, \frac{n^2}{s}))$ time for $\sqrt{n} \leq s \leq n$, improving the previously stated $\mathcal{O}(\frac{n^2}{s} \log n)$ bound.
 We then derived a simpler divide-and-conquer reconstruction strategy which, using the same \Ppass\ procedure, computes an actual \Lis\ in
-$\mathcal{O}(\max(n \log n \log \log n, \frac{n^2}{s}))$ time while preserving the $\mathcal{O}(s)$ bound on the number of words in the working space.
+$\mathcal{O}(\max(n \log n \log \frac{n}{s}, \frac{n^2}{s}))$ time while preserving the $\mathcal{O}(s)$ bound on the number of words in the working space.
 Finally, we implemented the algorithms in C++20 and benchmarked the implementation by measuring time and memory usage when running tests.
 
 \subsection{Open questions}
